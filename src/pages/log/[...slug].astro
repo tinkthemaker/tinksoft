@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+---
+<Base title={`${post.data.title} — TinkSoft`} description={post.data.description}>
+  <p><a href="/">&laquo; back to the log</a></p>
+  <h1>{post.data.title}</h1>
+  <p class="post-meta">
+    {fmt(post.data.date)}
+    {post.data.tags.length > 0 && <> &middot; {post.data.tags.map((t) => `#${t}`).join(' ')}</>}
+  </p>
+  <hr />
+  <div class="content">
+    <Content />
+  </div>
+</Base>

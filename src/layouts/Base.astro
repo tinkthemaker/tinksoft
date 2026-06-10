@@ -1,0 +1,170 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'TinkSoft — build logs, bugs, and small victories. Building software in public since 2026.' } = Astro.props;
+const path = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content={description} />
+  <title>{title}</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <style>
+    :root {
+      --bg: #f4f0e4;
+      --ink: #1a1a1a;
+      --link: #0000cc;
+      --visited: #551a8b;
+      --rule: #888;
+      --accent: #008080;
+      --muted: #555;
+      --badge-bg: #e4ddc8;
+      --code-bg: #1a1a1a;
+      --code-ink: #33ff33;
+      --quote-ink: #444;
+      --ship: #006600;
+      --wip: #b35900;
+      color-scheme: light dark;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #161613;
+        --ink: #d6d2c4;
+        --link: #7da7ff;
+        --visited: #c39be8;
+        --rule: #555;
+        --accent: #3fbdb0;
+        --muted: #9a968a;
+        --badge-bg: #26261f;
+        --code-bg: #0c0c0c;
+        --code-ink: #33ff33;
+        --quote-ink: #b0aca0;
+        --ship: #5dbb63;
+        --wip: #e0a050;
+      }
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0 auto;
+      max-width: 44rem;
+      padding: 1.5rem 1rem 3rem;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--ink);
+    }
+    a { color: var(--link); }
+    a:visited { color: var(--visited); }
+    a:hover { background: var(--ink); color: var(--bg); }
+    h1, h2, h3 { font-family: inherit; line-height: 1.2; }
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.2rem; margin-top: 2rem; }
+    hr {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 1.5rem 0;
+    }
+    pre.ascii {
+      font-size: clamp(6px, 1.9vw, 13px);
+      line-height: 1.15;
+      overflow: hidden;
+      margin: 0;
+      color: var(--accent);
+      user-select: none;
+    }
+    nav.site {
+      margin-top: 0.75rem;
+      letter-spacing: 0.02em;
+    }
+    nav.site a { margin-right: 0.25rem; }
+    nav.site a.here {
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: bold;
+      pointer-events: none;
+    }
+    .tagline { color: var(--muted); margin: 0.5rem 0 0; font-size: 0.9rem; }
+    table.log { border-collapse: collapse; width: 100%; }
+    table.log td { padding: 0.3rem 0.75rem 0.3rem 0; vertical-align: top; }
+    td.date { white-space: nowrap; color: var(--muted); font-size: 0.9rem; }
+    .post-meta { color: var(--muted); font-size: 0.9rem; }
+    .content :is(pre) {
+      background: var(--code-bg);
+      color: var(--code-ink);
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+    .content :is(code):not(pre code) {
+      background: var(--badge-bg);
+      padding: 0 0.25rem;
+    }
+    .content blockquote {
+      border-left: 3px solid var(--accent);
+      margin-left: 0;
+      padding-left: 1rem;
+      color: var(--quote-ink);
+    }
+    .content img { max-width: 100%; border: 1px solid var(--rule); }
+    footer {
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .badge {
+      display: inline-block;
+      border: 1px solid var(--rule);
+      background: var(--badge-bg);
+      padding: 0 0.4rem;
+      font-size: 0.75rem;
+      margin-right: 0.4rem;
+    }
+    .counter {
+      font-family: inherit;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      padding: 0 0.35rem;
+      letter-spacing: 0.15em;
+    }
+    .status-ship { color: var(--ship); font-weight: bold; }
+    .status-wip { color: var(--wip); font-weight: bold; }
+    .status-idea { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" style="text-decoration:none"><pre class="ascii">
+ _____ ___ _   _ _  ______  ___  _____ _____
+|_   _|_ _| \ | | |/ / ___|/ _ \|  ___|_   _|
+  | |  | ||  \| | ' /\___ \ | | | |_    | |
+  | |  | || |\  | . \ ___) | |_| |  _|   | |
+  |_| |___|_| \_|_|\_\____/ \___/|_|     |_|</pre></a>
+    <p class="tagline">// building software in public. logs, bugs, small victories. est. 2026</p>
+    <nav class="site">
+      [<a href="/" class={path === '/' ? 'here' : ''}>build log</a>]
+      [<a href="/projects/" class={path.startsWith('/projects') ? 'here' : ''}>projects</a>]
+      [<a href="/about/" class={path.startsWith('/about') ? 'here' : ''}>about</a>]
+    </nav>
+    <hr />
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer>
+    <hr />
+    <p>
+      <span class="badge">EST. 2026</span><span class="badge">100% HTML</span><span class="badge">0 KB JS</span><span class="badge">best viewed in any browser</span>
+    </p>
+    <p>you are visitor No. <span class="counter">0001337</span> &middot; &copy; {new Date().getFullYear()} tinksoft.com &middot; made by tink</p>
+  </footer>
+</body>
+</html>

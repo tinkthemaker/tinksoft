@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const fmt = (d: Date) =>
+  d.toISOString().slice(0, 10);
+---
+<Base title="TinkSoft — build log">
+  <h1>build log</h1>
+  <p>
+    Updates on what I'm building, what broke, and what I learned fixing it.
+    Newest first.
+  </p>
+
+  <table class="log">
+    {posts.map((post) => (
+      <tr>
+        <td class="date">{fmt(post.data.date)}</td>
+        <td>
+          <a href={`/log/${post.id}/`}>{post.data.title}</a>
+          {post.data.description && <><br /><span class="post-meta">{post.data.description}</span></>}
+        </td>
+      </tr>
+    ))}
+  </table>
+
+  {posts.length === 0 && <p><em>Nothing here yet. Check back soon.</em></p>}
+</Base>
