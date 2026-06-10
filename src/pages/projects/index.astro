@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const projects = await getCollection('projects');
+const order = { wip: 0, shipped: 1, idea: 2 };
+const sorted = projects.sort(
+  (a, b) => order[a.data.status] - order[b.data.status]
+);
+const label = { shipped: '[SHIPPED]', wip: '[WIP]', idea: '[IDEA]' };
+const cls = { shipped: 'status-ship', wip: 'status-wip', idea: 'status-idea' };
+---
+<Base title="projects — TinkSoft">
+  <h1>projects</h1>
+  <p>What's on the workbench, what made it out the door, and what's still a sketch. Each project gets its own page with the full story and related log entries.</p>
+
+  {sorted.map((p) => (
+    <>
+      <h2>
+        <span class={cls[p.data.status]}>{label[p.data.status]}</span>{' '}
+        <a href={`/projects/${p.id}/`}>{p.data.title}</a>
+      </h2>
+      <p>
+        {p.data.description}
+        {p.data.repo && <> [<a href={p.data.repo}>source</a>]</>}
+        {p.data.link && <> [<a href={p.data.link}>visit</a>]</>}
+      </p>
+    </>
+  ))}
+
+  {sorted.length === 0 && <p><em>Nothing on the workbench yet.</em></p>}
+</Base>

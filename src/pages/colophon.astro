@@ -1,0 +1,62 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+const projects = await getCollection('projects');
+const words = posts.reduce(
+  (sum, p) => sum + (p.body ?? '').split(/\s+/).filter(Boolean).length,
+  0
+);
+const oldest = posts.reduce(
+  (min, p) => (p.data.date < min ? p.data.date : min),
+  new Date()
+);
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+---
+<Base title="colophon — TinkSoft" description="How this site is built, and the site measuring itself at build time.">
+  <h1>colophon</h1>
+  <p>
+    How this site is made — and the site measuring itself. Every number below
+    is computed at build time by the site itself. No analytics, no JavaScript,
+    no estimates.
+  </p>
+
+  <h2>the numbers</h2>
+  <table class="log">
+    <tr><td class="date">pages</td><td>@PAGES@ HTML pages</td></tr>
+    <tr><td class="date">total weight</td><td>@RAW_KB@ KB raw &middot; @GZ_KB@ KB gzipped (entire site)</td></tr>
+    <tr><td class="date">avg page</td><td>@AVG_GZ@ KB gzipped</td></tr>
+    <tr><td class="date">heaviest page</td><td><a href="@HEAVIEST@">@HEAVIEST@</a> at @HEAVIEST_GZ@ KB gzipped</td></tr>
+    <tr><td class="date">javascript</td><td>0 bytes shipped, ever</td></tr>
+    <tr><td class="date">requests</td><td>1 per page (CSS and favicon inlined)</td></tr>
+    <tr><td class="date">log entries</td><td>{posts.length} posts, {words.toLocaleString()} words since {fmt(oldest)}</td></tr>
+    <tr><td class="date">projects</td><td>{projects.length} on the workbench</td></tr>
+    <tr><td class="date">built</td><td>@BUILT_AT@ in @BUILD_S@s</td></tr>
+  </table>
+
+  <h2>the stack</h2>
+  <p>
+    Posts are markdown files. <a href="https://astro.build">Astro</a> turns
+    them into plain HTML at build time and is never shipped to your browser.
+    Hosted on Vercel, deployed on every git push. All CSS is hand-written and
+    lives in one layout file. Fonts are whatever monospace your machine
+    already has.
+  </p>
+  <p>
+    Security headers include <code>Content-Security-Policy: default-src 'none'</code>
+    — this site is not allowed to load scripts, fonts, frames, or anything
+    else, even if it wanted to.
+  </p>
+
+  <h2>the philosophy</h2>
+  <p>
+    Do a lot with a little. The demoscene fit whole worlds in 64 KB; this
+    site can fit its every page in a single TCP round trip. Constraints are
+    not the obstacle, they're the design.
+  </p>
+  <p>
+    The numbers above update on every deploy. If they ever get worse, that
+    goes in the <a href="/">build log</a> too.
+  </p>
+</Base>

@@ -1,0 +1,57 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+const label = { shipped: '[SHIPPED]', wip: '[WIP]', idea: '[IDEA]' };
+const cls = { shipped: 'status-ship', wip: 'status-wip', idea: 'status-idea' };
+
+const related = project.data.tag
+  ? (await getCollection('blog'))
+      .filter((p) => p.data.tags.includes(project.data.tag!))
+      .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  : [];
+
+const fmt = (d: Date) => d.toISOString().slice(0, 10);
+---
+<Base title={`${project.data.title} — TinkSoft`} description={project.data.description}>
+  <p><a href="/projects/">&laquo; back to projects</a></p>
+  <h1>
+    <span class={cls[project.data.status]}>{label[project.data.status]}</span>{' '}
+    {project.data.title}
+  </h1>
+  <p class="post-meta">
+    {project.data.started && <>started {fmt(project.data.started)}</>}
+    {project.data.repo && <> &middot; <a href={project.data.repo}>source</a></>}
+    {project.data.link && <> &middot; <a href={project.data.link}>visit</a></>}
+  </p>
+  <hr />
+  <div class="content">
+    <Content />
+  </div>
+
+  {related.length > 0 && (
+    <>
+      <hr />
+      <h2>build log entries</h2>
+      <table class="log">
+        {related.map((post) => (
+          <tr>
+            <td class="date">{fmt(post.data.date)}</td>
+            <td><a href={`/log/${post.id}/`}>{post.data.title}</a></td>
+          </tr>
+        ))}
+      </table>
+    </>
+  )}
+</Base>

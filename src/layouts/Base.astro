@@ -5,6 +5,8 @@ interface Props {
 }
 const { title, description = 'TinkSoft — build logs, bugs, and small victories. Building software in public since 2026.' } = Astro.props;
 const path = Astro.url.pathname;
+const canonical = new URL(path, Astro.site);
+const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cstyle%3Erect%7Bfill:%23f4f0e4%7Dtext%7Bfill:%23008080%7D@media(prefers-color-scheme:dark)%7Brect%7Bfill:%23161613%7Dtext%7Bfill:%233fbdb0%7D%7D%3C/style%3E%3Crect width='32' height='32'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='bold' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E";
 ---
 <!doctype html>
 <html lang="en">
@@ -13,7 +15,16 @@ const path = Astro.url.pathname;
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content={description} />
   <title>{title}</title>
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" href={favicon} type="image/svg+xml" />
+  <link rel="alternate" type="application/rss+xml" title="TinkSoft build log" href="/rss.xml" />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <meta name="theme-color" content="#f4f0e4" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#161613" media="(prefers-color-scheme: dark)" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonical} />
   <style>
     :root {
       --bg: #f4f0e4;
@@ -162,7 +173,13 @@ const path = Astro.url.pathname;
   <footer>
     <hr />
     <p>
-      <span class="badge">EST. 2026</span><span class="badge">100% HTML</span><span class="badge">0 KB JS</span><span class="badge">best viewed in any browser</span>
+      <span class="badge">EST. 2026</span><span class="badge">100% HTML</span><span class="badge">0 KB JS</span><span class="badge">1 HTTP REQUEST</span><span class="badge">best viewed in any browser</span>
+    </p>
+    <p>
+      [<a href="/rss.xml">rss</a>]
+      [<a href="/colophon/">colophon</a>]
+      [<a href="/tinksoft.nfo">.nfo</a>]
+      [<a href="/humans.txt">humans.txt</a>]
     </p>
     <p>you are visitor No. <span class="counter">0001337</span> &middot; &copy; {new Date().getFullYear()} tinksoft.com &middot; made by tink</p>
   </footer>

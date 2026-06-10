@@ -1,6 +1,16 @@
 # tinksoft.com
 
-A 90s-style build log for working in public. Built with [Astro](https://astro.build) — markdown in, plain HTML out, zero JavaScript shipped.
+A 90s-style build log for working in public. Built with [Astro](https://astro.build) — markdown in, plain HTML out.
+
+## The numbers
+
+- **0 KB JavaScript** shipped to the browser
+- **1 HTTP request** per page — CSS and favicon are inlined into the HTML
+- **~2.5 KB gzipped** per page, ~18 KB gzipped for the entire site
+- Strict `Content-Security-Policy: default-src 'none'`
+- Full dark mode via `prefers-color-scheme` — no toggle, no JS, no flash
+- RSS feed, sitemap, robots.txt, humans.txt, and a proper [.nfo file](https://tinksoft.com/tinksoft.nfo)
+- A [colophon](https://tinksoft.com/colophon/) where the site measures itself on every build
 
 ## Writing a new post
 
@@ -19,36 +29,57 @@ Post body in markdown.
 
 The filename becomes the URL: `week-1-update.md` → `tinksoft.com/log/week-1-update/`.
 
+Every Friday at 9am, a scheduled Cowork task drafts `signal-YYYY-MM-DD.md` —
+a curated list of the week's AI model news. Cut it to the best ~5 links,
+replace the TODO markers with your takes, and push.
+
+## Adding a project
+
+Create a markdown file in `src/content/projects/`:
+
+```md
+---
+title: "my project"
+status: wip            # shipped | wip | idea
+description: "One-liner for the projects index."
+started: 2026-06-15
+repo: https://github.com/tinkthemaker/my-project   # optional
+link: https://myproject.com                        # optional
+tag: my-project        # optional — log posts with this tag appear on the project page
+---
+
+The full story of the project in markdown.
+```
+
+Tag your log posts with the project's `tag` and they'll automatically appear
+on the project's page under "build log entries".
+
 ## Local development
 
 ```bash
 npm install
 npm run dev      # live preview at localhost:4321
-npm run build    # production build to dist/
+npm run build    # production build to dist/ (also computes colophon stats)
 ```
 
-## Deploying to Vercel (one-time setup)
+## Deploying
 
-1. Push this folder to a GitHub repo:
-   ```bash
-   git init && git add -A && git commit -m "initial site"
-   gh repo create tinksoft --private --source=. --push
-   ```
-   (or create the repo on github.com and `git remote add` / `git push` manually)
-2. Go to [vercel.com/new](https://vercel.com/new), import the repo. Vercel auto-detects Astro — accept the defaults and deploy.
-3. In the Vercel project: Settings → Domains → add `tinksoft.com`. Vercel shows you the DNS records to set at your domain registrar (an `A` record to `76.76.21.21`, or change nameservers to Vercel's).
-
-After setup, publishing is just:
+Connected to Vercel via GitHub. Publishing is:
 
 ```bash
 git add . && git commit -m "log: new post" && git push
 ```
 
-Vercel rebuilds and deploys automatically in ~30 seconds.
+Domain setup (one-time): Vercel project → Settings → Domains → add
+`tinksoft.com`, then set the DNS records Vercel shows at your registrar.
 
-## Editing the site
+## Map
 
-- **Projects list**: edit the array at the top of `src/pages/projects.astro`
-- **About page**: `src/pages/about.astro`
-- **Styling**: all CSS lives in `src/layouts/Base.astro`
-- **Visitor counter**: it's decorative (`Base.astro`, footer). Increment it whenever you feel like you've earned it.
+- `src/content/blog/` — log posts (markdown)
+- `src/content/projects/` — projects (markdown)
+- `src/layouts/Base.astro` — all HTML structure + all CSS
+- `src/pages/` — page templates, colophon, and the RSS route
+- `scripts/` — build stamp + colophon stats injection (runs in `npm run build`)
+- `public/` — tinksoft.nfo, humans.txt, robots.txt, badge.svg (88×31 button)
+- `vercel.json` — security + cache headers
+- The visitor counter is decorative. Increment it when you've earned it.
