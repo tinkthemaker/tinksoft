@@ -17,9 +17,9 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
 <Base title="colophon — TinkSoft" description="How this site is built, and the site measuring itself at build time.">
   <h1>colophon</h1>
   <p>
-    How this site is made — and the site measuring itself. Every number below
-    is computed at build time by the site itself. No analytics, no JavaScript,
-    no estimates.
+    How this site is made, and the site measuring itself. Every number below
+    is computed at build time by the site's own build script. No analytics
+    were involved.
   </p>
 
   <h2>the numbers</h2>
@@ -29,19 +29,37 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
     <tr><td class="date">avg page</td><td>@AVG_GZ@ KB gzipped</td></tr>
     <tr><td class="date">heaviest page</td><td><a href="@HEAVIEST@">@HEAVIEST@</a> at @HEAVIEST_GZ@ KB gzipped</td></tr>
     <tr><td class="date">javascript</td><td>0 bytes shipped, ever</td></tr>
-    <tr><td class="date">requests</td><td>1 per page (CSS and favicon inlined)</td></tr>
+    <tr><td class="date">requests</td><td>1 per page (CSS and favicon inlined); the counter is an inline SVG</td></tr>
     <tr><td class="date">log entries</td><td>{posts.length} posts, {words.toLocaleString()} words since {fmt(oldest)}</td></tr>
     <tr><td class="date">projects</td><td>{projects.length} on the workbench</td></tr>
     <tr><td class="date">built</td><td>@BUILT_AT@ in @BUILD_S@s</td></tr>
   </table>
 
+  <h2>the counter</h2>
+  <p>
+    The visitor counter in the footer is a static SVG that shows 0001337.
+    The original site incremented a flat-file counter via PHP on the
+    server; this Pages-hosted rebuild can't run PHP, so the counter is now
+    honest about being frozen in time. The number is preserved because
+    some traditions matter.
+  </p>
+
+  <h2>the manifest</h2>
+  <p>
+    Every deploy ships a manifest of SHA-256 checksums for the whole site at
+    <a href="/checksums.txt">/checksums.txt</a>. If you want to check that
+    the page you're reading is the page I shipped, you can. Before anything
+    is deployed, <a href="/projects/sigil/">Sigil</a> scans the repo so no
+    stray secrets ride along.
+  </p>
+
   <h2>the stack</h2>
   <p>
     Posts are markdown files. <a href="https://astro.build">Astro</a> turns
     them into plain HTML at build time and is never shipped to your browser.
-    Hosted on Vercel, deployed on every git push. All CSS is hand-written and
-    lives in one layout file. Fonts are whatever monospace your machine
-    already has.
+    All CSS is hand-written and lives in one layout file. Fonts are whatever
+    monospace your machine already has. Hosted on classic cPanel shared
+    hosting, deployed the honest way: FTP.
   </p>
   <p>
     Security headers include <code>Content-Security-Policy: default-src 'none'</code>
@@ -51,9 +69,9 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
 
   <h2>the philosophy</h2>
   <p>
-    Do a lot with a little. The demoscene fit whole worlds in 64 KB; this
-    site can fit its every page in a single TCP round trip. Constraints are
-    not the obstacle, they're the design.
+    Do a lot with a little. The demoscene fit whole worlds into 64 KB. A page
+    that fits in a single TCP round trip is this site's modest tribute to
+    that tradition.
   </p>
   <p>
     The numbers above update on every deploy. If they ever get worse, that

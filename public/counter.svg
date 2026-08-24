@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="66" height="20" role="img" aria-label="visitor counter, starting at 1337">
+  <style>
+    rect { fill: #f4f0e4; }
+    text { fill: #008080; font-family: 'Courier New', Courier, monospace; font-weight: bold; font-size: 14px; }
+    @media (prefers-color-scheme: dark) {
+      rect { fill: #161613; }
+      text { fill: #3fbdb0; }
+    }
+  </style>
+  <rect width="66" height="20" stroke="#888" stroke-width="1"/>
+  <text x="33" y="15" text-anchor="middle">0001337</text>
+</svg>

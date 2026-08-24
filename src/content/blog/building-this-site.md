@@ -1,36 +1,41 @@
 ---
-title: "building this site"
+title: "raising this tower"
 date: 2026-06-09
-description: "The stack behind tinksoft.com and why it's deliberately boring."
+description: "The materials behind tinksoft.com, all of them deliberately humble."
 tags: [meta, astro]
 ---
 
-Second post, and it's about the site itself. Fitting.
+Second entry, and it's about the tower itself.
 
-## the stack
+## the materials
 
-- **Astro** — posts are markdown files, output is plain HTML
-- **Zero JavaScript** shipped to the browser
-- **Vercel** for hosting, deploys on every git push
-- One CSS file's worth of styling, written by hand
+Every entry here is a plain markdown file. Astro, the site builder I'm using,
+turns those files into plain HTML when the site is built, then gets out of the
+way completely. Nothing scripted reaches your browser. No JavaScript, one CSS
+file I wrote by hand, hosted on cheap shared space. That is the whole stack,
+and I want it to stay that small.
 
-## why so minimal?
+## why so austere
 
-Every build-in-public site I admired had one thing in common: the friction of
-posting was near zero. If publishing an update means opening a CMS, picking a
-cover image, and fighting a rich text editor, the updates stop.
+Every build-in-public blog I admired kept the cost of posting near zero. The
+moment publishing means logging into a CMS, hunting for a cover image, and
+wrestling a rich text editor, the entries quietly stop. I've watched it happen
+to better builders than me, and I've felt the same pull myself.
 
-Here, a new post is a new `.md` file in a folder. Commit, push, live.
+So here, a new entry is one markdown file dropped in a folder. That's it.
 
 ```bash
-# the entire publishing workflow
+# the entire publishing ritual
 git add src/content/blog/my-update.md
 git commit -m "log: my update"
 git push
 ```
 
-## what broke already
+Three commands, and it's live. If posting stays that cheap, I'll keep doing it.
 
-The ASCII logo looked great on desktop and wrapped into soup on mobile.
-Fixed with `font-size: clamp()` so it scales down instead of wrapping.
-First bug of the build log — logged, as promised.
+## what already broke
+
+The ASCII banner up top looked grand on a desktop monitor and collapsed into
+alphabet soup on a phone. The fix was one line, `font-size: clamp()`, which
+lets the text shrink to fit the screen instead of wrapping into nonsense. First
+bug in the book. Recorded, exactly as I swore it would be.

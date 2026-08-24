@@ -1,29 +1,31 @@
 ---
 title: "hello, world"
 date: 2026-06-09
-description: "First post. Why this site exists and what to expect."
+description: "The grimoire opens. What this chronicle is for."
 tags: [meta]
 ---
 
-This is the first entry in the TinkSoft build log.
+First entry in the TinkSoft grimoire.
 
-The idea is simple: I'm going to build software, and I'm going to write about
-it here while I do — including the parts that don't go well. Especially the
-parts that don't go well.
+The plan is simple, and a little terrifying to put in writing: build software,
+and keep an honest record of the work while it happens. The things that worked,
+and the things that fizzled. Those especially, because those are the ones I'd
+otherwise quietly forget.
 
 ## what to expect
 
-Short, frequent updates. Things like:
+Short entries, posted often. What went right this week, or what didn't. The
+bug that took three evenings to chase down when it should have taken ten
+minutes, and how good it felt to finally corner it. Decisions and the reasons
+behind them, written down before hindsight rewrites the story into something
+cleaner than it really was.
 
-- what I shipped (or didn't) this week
-- bugs that took embarrassingly long to find
-- decisions I made and why
-- tools and techniques that earned their keep
+## the oaths
 
-## the rules I'm setting for myself
+Three rules I'm holding myself to.
 
-1. Post the update even when the update is "I got stuck."
-2. No editing history to look smarter in retrospect.
-3. Ship something every week, even if it's small.
+1. Post the entry even when the entry is "I got stuck."
+2. Never rewrite an old entry to look wiser after the fact.
+3. Ship something every week. A tiny thing counts.
 
-That's it. See you in the next log.
+See you in the next one.

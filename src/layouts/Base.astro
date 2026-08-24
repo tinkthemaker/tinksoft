@@ -137,12 +137,9 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
       font-size: 0.75rem;
       margin-right: 0.4rem;
     }
-    .counter {
-      font-family: inherit;
-      background: var(--code-bg);
-      color: var(--code-ink);
-      padding: 0 0.35rem;
-      letter-spacing: 0.15em;
+    img.counter {
+      vertical-align: middle;
+      border: 1px solid var(--rule);
     }
     .status-ship { color: var(--ship); font-weight: bold; }
     .status-wip { color: var(--wip); font-weight: bold; }
@@ -152,16 +149,18 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
 <body>
   <header>
     <a href="/" style="text-decoration:none"><pre class="ascii">
- _____ ___ _   _ _  ______  ___  _____ _____
-|_   _|_ _| \ | | |/ / ___|/ _ \|  ___|_   _|
-  | |  | ||  \| | ' /\___ \ | | | |_    | |
+ _____ ___ _   _ _  ______   ___  _____ _____
+|_   _|_ _| \ | | |/ / ___| / _ \|  ___|_   _|
+  | |  | ||  \| | ' /\___ \| | | | |_    | |
   | |  | || |\  | . \ ___) | |_| |  _|   | |
   |_| |___|_| \_|_|\_\____/ \___/|_|     |_|</pre></a>
     <p class="tagline">// building software in public. logs, bugs, small victories. est. 2026</p>
     <nav class="site">
       [<a href="/" class={path === '/' ? 'here' : ''}>build log</a>]
       [<a href="/projects/" class={path.startsWith('/projects') ? 'here' : ''}>projects</a>]
+      [<a href="/now/" class={path.startsWith('/now') ? 'here' : ''}>now</a>]
       [<a href="/about/" class={path.startsWith('/about') ? 'here' : ''}>about</a>]
+      [<a href="https://github.com/tinkthemaker/" rel="me">github</a>]
     </nav>
     <hr />
   </header>
@@ -173,15 +172,18 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
   <footer>
     <hr />
     <p>
-      <span class="badge">EST. 2026</span><span class="badge">100% HTML</span><span class="badge">0 KB JS</span><span class="badge">1 HTTP REQUEST</span><span class="badge">best viewed in any browser</span>
+      <span class="badge">EST. 2026</span><span class="badge">100% HTML</span><span class="badge">0 KB JS</span><span class="badge">1 REQUEST + COUNTER</span><span class="badge">best viewed in any browser</span>
     </p>
     <p>
       [<a href="/rss.xml">rss</a>]
+      [<a href="https://tally.so/r/XXXXXXX" rel="noopener">guestbook</a>]
+      [<a href="/links/">links</a>]
       [<a href="/colophon/">colophon</a>]
       [<a href="/tinksoft.nfo">.nfo</a>]
       [<a href="/humans.txt">humans.txt</a>]
+      [<a href="https://github.com/tinkthemaker/" rel="me">github</a>]
     </p>
-    <p>you are visitor No. <span class="counter">0001337</span> &middot; &copy; {new Date().getFullYear()} tinksoft.com &middot; made by tink</p>
+    <p>you are visitor No. <img class="counter" src="/counter.svg" alt="visitor counter" height="20" /> &middot; &copy; {new Date().getFullYear()} tinksoft.com &middot; made by tink</p>
   </footer>
 </body>
 </html>

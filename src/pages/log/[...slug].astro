@@ -20,6 +20,7 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
   <p class="post-meta">
     {fmt(post.data.date)}
     {post.data.tags.length > 0 && <> &middot; {post.data.tags.map((t) => `#${t}`).join(' ')}</>}
+    &middot; <a href={`/log/${post.id}.txt`}>.txt</a>
   </p>
   <hr />
   <div class="content">
