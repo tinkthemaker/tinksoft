@@ -3,14 +3,16 @@ import Base from '../../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((post) => ({
+  const posts = (await getCollection('blog')).sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+  );
+  return posts.map((post, i) => ({
     params: { slug: post.id },
-    props: { post },
+    props: { post, newer: posts[i - 1], older: posts[i + 1] },
   }));
 }
 
-const { post } = Astro.props;
+const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
 ---
@@ -26,4 +28,14 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
   <div class="content">
     <Content />
   </div>
+
+  {(newer || older) && (
+    <>
+      <hr />
+      <nav class="post-nav" aria-label="nearby entries">
+        {older && <p>&laquo; older: <a href={`/log/${older.id}/`}>{older.data.title}</a></p>}
+        {newer && <p>newer: <a href={`/log/${newer.id}/`}>{newer.data.title}</a> &raquo;</p>}
+      </nav>
+    </>
+  )}
 </Base>

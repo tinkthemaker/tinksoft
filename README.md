@@ -64,14 +64,16 @@ npm run build    # production build to dist/ (also computes colophon stats)
 
 ## Deploying
 
-Connected to Vercel via GitHub. Publishing is:
+GitHub Actions builds and publishes to GitHub Pages on every push to `main`
+(`.github/workflows/pages.yml`). Publishing is:
 
 ```bash
 git add . && git commit -m "log: new post" && git push
 ```
 
-Domain setup (one-time): Vercel project → Settings → Domains → add
-`tinksoft.com`, then set the DNS records Vercel shows at your registrar.
+Domain setup (one-time): the `CNAME` file holds `tinksoft.com` and is copied
+into `dist/` by the workflow; point the DNS records at GitHub Pages at your
+registrar.
 
 ## Map
 
@@ -81,5 +83,5 @@ Domain setup (one-time): Vercel project → Settings → Domains → add
 - `src/pages/` — page templates, colophon, and the RSS route
 - `scripts/` — build stamp + colophon stats injection (runs in `npm run build`)
 - `public/` — tinksoft.nfo, humans.txt, robots.txt, badge.svg (88×31 button)
-- `vercel.json` — security + cache headers
+- `.github/workflows/pages.yml` — build + deploy to GitHub Pages
 - The visitor counter is decorative. Increment it when you've earned it.
