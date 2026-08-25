@@ -6,9 +6,8 @@ export async function GET(context) {
     (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
   );
   return rss({
-    title: 'TinkSoft build log',
-    description:
-      'Building software in public. Logs, bugs, small victories.',
+    title: 'TinkSoft posts',
+    description: 'Notes on software, security, games, and other interests.',
     site: context.site,
     items: posts.map((post) => ({
       title: post.data.title,

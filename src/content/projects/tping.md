@@ -1,17 +1,15 @@
 ---
 title: "TPing"
 status: shipped
-description: "A watchtower for on-call. Sends ravens to every store device and shows who answered."
+description: "Monitors store devices and records reachability and response time."
 started: 2025-07-15
 repo: https://github.com/tinkthemaker/TPing
 tag: tping
 ---
 
-A watchtower for on-call shifts. I needed to open one window and see every
-store device, whether it answered, and how fast. A spreadsheet of `ping`
-output wasn't cutting it. TPing sends the ravens, keeps the history, and
-shows the whole field at a glance. Bubble Tea TUI for me, a Walk GUI for
-the rest of the team.
+TPing monitors store devices and records whether they respond and how long
+they take. It keeps history for incident review. There is a Bubble Tea TUI
+and a Windows GUI built with Walk.
 
 ## goals
 
@@ -21,5 +19,4 @@ the rest of the team.
 
 ## current status
 
-Shipped and used on rotation. The TUI is mine. The GUI keeps everyone else
-happy.
+Shipped and used during on-call rotations.

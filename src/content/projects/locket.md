@@ -1,7 +1,7 @@
 ---
 title: "Locket"
 status: shipped
-description: "A warded reliquary for secrets, with a TUI worth opening daily."
+description: "An encrypted secrets manager with a terminal interface."
 started: 2025-10-20
 repo: https://github.com/tinkthemaker/locket
 tag: locket
@@ -19,4 +19,4 @@ Sealed with `age` for encryption, drawn with Bubble Tea v2.
 
 ## current status
 
-Shipped, opened daily. Every secret I control now lives behind its wards.
+Shipped and used daily.

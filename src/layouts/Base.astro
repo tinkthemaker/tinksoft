@@ -3,11 +3,11 @@ interface Props {
   title: string;
   description?: string;
 }
-const { title, description = 'TinkSoft — build logs, bugs, and small victories. Building software in public since 2026.' } = Astro.props;
+const { title, description = 'TinkSoft — notes on software, security, games, and whatever else interests me.' } = Astro.props;
 const path = Astro.url.pathname;
 
 const nav = [
-  { href: '/', label: 'build log', section: ['/', '/log'] },
+  { href: '/', label: 'posts', section: ['/', '/log'] },
   { href: '/projects/', label: 'projects', section: ['/projects'] },
   { href: '/now/', label: 'now', section: ['/now'] },
   { href: '/about/', label: 'about', section: ['/about'] },
@@ -37,7 +37,7 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
   <title>{title}</title>
   <link rel="canonical" href={canonical} />
   <link rel="icon" href={favicon} type="image/svg+xml" />
-  <link rel="alternate" type="application/rss+xml" title="TinkSoft build log" href="/rss.xml" />
+  <link rel="alternate" type="application/rss+xml" title="TinkSoft posts" href="/rss.xml" />
   <link rel="sitemap" href="/sitemap-index.xml" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:" />
   <meta name="theme-color" content="#f4f0e4" media="(prefers-color-scheme: light)" />
@@ -196,7 +196,7 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
   | |  | ||  \| | ' /\___ \| | | | |_    | |
   | |  | || |\  | . \ ___) | |_| |  _|   | |
   |_| |___|_| \_|_|\_\____/ \___/|_|     |_|</pre></a>
-    <p class="tagline">// building software in public. logs, bugs, small victories. est. 2026</p>
+    <p class="tagline">// software, security, games, and whatever else interests me.</p>
     <nav class="site" aria-label="site">
       {nav.map((item) => (
         <span class="navitem">[<a
@@ -216,14 +216,14 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
   <footer>
     <hr />
     <p>
-      <span class="badge">EST. 2026</span><span class="badge">100% HTML</span><span class="badge">0 KB JS</span><span class="badge">1 REQUEST + COUNTER</span><span class="badge">best viewed in any browser</span>
+      <span class="badge">PERSONAL SITE</span><span class="badge">PLAIN HTML</span><span class="badge">0 KB JS</span><span class="badge">NO TRACKING</span><span class="badge">EST. 2026</span>
     </p>
     <nav aria-label="more">
       {footerLinks.map((item) => (
         <span class="navitem">[<a href={item.href} rel={item.me ? 'me' : undefined}>{item.label}</a>]</span>
       ))}
     </nav>
-    <p>you are visitor No. <img class="counter" src="/counter.svg" alt="visitor counter, frozen at 0001337" width="66" height="20" /> &middot; &copy; {new Date().getFullYear()} tinksoft.com &middot; made by tink</p>
+    <p>counter: <img class="counter" src="/counter.svg" alt="static counter: 0001337" width="66" height="20" /> &middot; &copy; {new Date().getFullYear()} tinksoft.com &middot; tink</p>
   </footer>
 </body>
 </html>

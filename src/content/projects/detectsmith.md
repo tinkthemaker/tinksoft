@@ -1,17 +1,15 @@
 ---
 title: "Detectsmith"
 status: shipped
-description: "A smithy for detection wards. Tries to be useful, not Splunk."
+description: "Tests detection rules against local logs and JSONL streams."
 started: 2025-11-15
 repo: https://github.com/tinkthemaker/Detectsmith
 tag: detectsmith
 ---
 
-A smithy for detection wards. I built it while working through
-detection-engineering problems, annoyed at the gap between "write a Sigma
-rule" and "watch it work in a SIEM." Detectsmith lives in that gap. You
-forge the ward against real logs, and only hang it once it catches what it
-should.
+Detectsmith tests detection rules against real log data before they are moved
+into a SIEM. It runs locally against log files and JSONL streams and produces
+output suitable for tickets and review.
 
 ## goals
 
@@ -21,5 +19,4 @@ should.
 
 ## current status
 
-Shipped and used. Detection packs for specific attacker TTPs get added as I
-forge them.
+Shipped and in use. I add detection packs as I need them.

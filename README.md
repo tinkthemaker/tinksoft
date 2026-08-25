@@ -1,6 +1,8 @@
 # tinksoft.com
 
-A 90s-style build log for working in public. Built with [Astro](https://astro.build) — markdown in, plain HTML out.
+A personal site for notes on software, security, games, and anything else I
+find worth posting. Built with [Astro](https://astro.build) — markdown in,
+plain HTML out.
 
 ## The numbers
 
@@ -29,10 +31,6 @@ Post body in markdown.
 
 The filename becomes the URL: `week-1-update.md` → `tinksoft.com/log/week-1-update/`.
 
-Every Friday at 9am, a scheduled Cowork task drafts `signal-YYYY-MM-DD.md` —
-a curated list of the week's AI model news. Cut it to the best ~5 links,
-replace the TODO markers with your takes, and push.
-
 ## Adding a project
 
 Create a markdown file in `src/content/projects/`:
@@ -51,8 +49,8 @@ tag: my-project        # optional — log posts with this tag appear on the proj
 The full story of the project in markdown.
 ```
 
-Tag your log posts with the project's `tag` and they'll automatically appear
-on the project's page under "build log entries".
+Tag posts with the project's `tag` and they'll automatically appear on the
+project's page under "related posts".
 
 ## Local development
 
@@ -85,4 +83,4 @@ the repository's `CNAME` file into `dist/` for each deployment.
 - `scripts/` — build stamp + colophon stats injection (runs in `npm run build`)
 - `public/` — tinksoft.nfo, humans.txt, robots.txt, badge.svg (88×31 button)
 - `.github/workflows/pages.yml` — build + deploy to GitHub Pages
-- The visitor counter is decorative. Increment it when you've earned it.
+- The visitor counter is decorative and static.

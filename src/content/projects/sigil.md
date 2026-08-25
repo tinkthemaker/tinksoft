@@ -11,12 +11,10 @@ Secrets discovery and remediation. Sigil scans a repo for the credentials
 that shouldn't be there: AWS keys, GitHub tokens, API keys, private keys,
 bearer tokens. Findings are always shown masked, and from the TUI each one
 can be moved straight into [Locket](/projects/locket/), my secrets vault.
-A pre-commit hook stands guard so new ones never reach git in the first
-place.
+A pre-commit hook blocks new findings before they reach git.
 
-The name is older than the scope. It started as a sketch for an
-artifact-signing tool, and the secrets scanner is what it grew into. The
-wax-seal ambition might return someday. The scanner earns its keep now.
+The project started as an artifact-signing tool. The secrets scanner became
+the useful part, so that is now the focus.
 
 ## goals
 
@@ -27,4 +25,4 @@ wax-seal ambition might return someday. The scanner earns its keep now.
 
 ## current status
 
-Shipped and growing. The pre-commit hook guards every repo on this site.
+Shipped and in use. The pre-commit hook runs on my repositories.

@@ -9,11 +9,11 @@ const posts = (await getCollection('blog')).sort(
 const fmt = (d: Date) =>
   d.toISOString().slice(0, 10);
 ---
-<Base title="TinkSoft — build log">
-  <h1>build log</h1>
+<Base title="TinkSoft — posts">
+  <h1>posts</h1>
   <p>
-    Updates on the work as it happens, including what broke and what fixing
-    it taught me. Newest first.
+    Notes on software, security, games, and whatever else has my attention.
+    Newest first.
   </p>
 
   <table class="log">
@@ -28,5 +28,5 @@ const fmt = (d: Date) =>
     ))}
   </table>
 
-  {posts.length === 0 && <p><em>Nothing here yet. Check back soon.</em></p>}
+  {posts.length === 0 && <p><em>No posts.</em></p>}
 </Base>

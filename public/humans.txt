@@ -1,15 +1,14 @@
-/* TEAM */
-Builder: Tink
+/* OWNER */
+Name: Tink
 Site: tinksoft.com
-Location: Earth
 
 /* SITE */
+Purpose: Personal notes and project pages
 Standards: HTML5, CSS3, RSS 2.0
 Components: Astro (build-time only), zero client-side JavaScript
 Doctype: HTML5
-IDE: whatever was open at the time
 
-/* PHILOSOPHY */
-One HTTP request per page.
-Do a lot with a little.
-Post the update even when the update is "I got stuck."
+/* POLICY */
+Analytics: none
+Tracking: none
+Client-side JavaScript: none

@@ -7,49 +7,36 @@
 ║      ██║   ██║██║ ╚████║██║  ██╗███████║╚██████╔╝██║        ██║    ║
 ║      ╚═╝   ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝        ╚═╝    ║
 ║                                                                    ║
-║                .oO  TINKSOFT PROUDLY PRESENTS  Oo.                 ║
-║              building software in public // est. 2026              ║
+║             TINKSOFT.COM // PERSONAL FILE // EST. 2026             ║
 ║                                                                    ║
 ╠═[ RELEASE iNFO ]═══════════════════════════════════════════════════╣
 ║                                                                    ║
 ║   RELEASE NAME.. : tinksoft.com                                    ║
-║   TYPE.......... : website / build log                             ║
-║   SUPPLiER...... : tink                                            ║
-║   RELEASE DATE.. : 2026-06-09                                      ║
-║   PLATFORM...... : any browser since ~1996                         ║
-║   SiZE.......... : measured live at /colophon/                     ║
-║   JAVASCRiPT.... : 0 bytes -- none, never                          ║
-║   PROTECTiON.... : CSP default-src 'none'                          ║
-║   FORMAT........ : static HTML / inline CSS                        ║
+║   TYPE.......... : personal website                                ║
+║   OWNER......... : tink                                            ║
+║   CREATED....... : 2026-06-09                                      ║
+║   TOPiCS........ : software / security / games / other             ║
+║   OUTPUT........ : static HTML / inline CSS                        ║
+║   CLiENT JS..... : 0 bytes                                         ║
+║   TRACKiNG...... : none                                            ║
+║   CSP........... : default-src 'none'                              ║
 ║   HOSTiNG....... : GitHub Pages                                    ║
 ║                                                                    ║
-╠═[ GROUP NOTES ]════════════════════════════════════════════════════╣
+╠═[ ABOUT ]══════════════════════════════════════════════════════════╣
 ║                                                                    ║
-║   Built in public. Every win, every bug, every weekend lost to a   ║
-║   missing semicolon -- logged.                                     ║
+║   This is my personal site. I post notes on software, security,    ║
+║   games, tools, and anything else that interests me.               ║
 ║                                                                    ║
-║   The constraint is the point: plain HTML, inline CSS, a strict    ║
-║   CSP, no trackers, and no framework shipped to your browser. One  ║
-║   document request, plus the frozen counter.                       ║
+║   There is no fixed subject and no posting schedule. If something  ║
+║   is here, I wanted to write it down.                              ║
 ║                                                                    ║
-║   Do a lot with a little. The demoscene fit whole worlds into 64   ║
-║   KB; a page that fits in a single TCP round trip is this site's   ║
-║   modest tribute to that tradition.                                ║
+╠═[ iNDEX ]══════════════════════════════════════════════════════════╣
 ║                                                                    ║
-║   One entry a week, minimum. No polish. No marketing. Just what    ║
-║   happened.                                                        ║
-║                                                                    ║
-╠═[ GREETZ FLY OUT TO ]══════════════════════════════════════════════╣
-║                                                                    ║
-║   The demoscene . the old web . wiby.me . neocities . 512kb.club . ║
-║   textfiles.com . 16colo.rs . nownownow.com . everyone shipping    ║
-║   small things in public . and you, for reading this far.          ║
-║                                                                    ║
-╠═[ WE'RE LOOKiNG FOR ]══════════════════════════════════════════════╣
-║                                                                    ║
-║   Nothing, honestly. It's a one-wizard operation. But if you keep  ║
-║   a build log of your own, drop a line and I'll link you on        ║
-║   /links/.                                                         ║
+║   POSTS......... : tinksoft.com/                                   ║
+║   PROJECTS...... : tinksoft.com/projects/                          ║
+║   CURRENT....... : tinksoft.com/now/                               ║
+║   LiNKS......... : tinksoft.com/links/                             ║
+║   SOURCE........ : github.com/tinkthemaker/tinksoft                ║
 ║                                                                    ║
 ╠═[ CONTACT ]════════════════════════════════════════════════════════╣
 ║                                                                    ║
@@ -60,6 +47,5 @@
 ║   NFO........... : tinksoft.com/tinksoft.nfo                       ║
 ║                                                                    ║
 ╠═[ EOF ]════════════════════════════════════════════════════════════╣
-║            UTF-8 // MONOSPACE // 70 COLUMNS // 0 KB JS             ║
-║             tinksoft.com // est. 2026 // made by tink              ║
+║            END OF FILE // NO JAVASCRIPT // NO TRACKING             ║
 ╚════════════════════════════════════════════════════════════════════╝

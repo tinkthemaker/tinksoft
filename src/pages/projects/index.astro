@@ -16,9 +16,7 @@ const cls = { shipped: 'status-ship', wip: 'status-wip', idea: 'status-idea' };
 <Base title="projects — TinkSoft">
   <h1>projects</h1>
   <p>
-    What's on the workbench, what made it out the door, and what's still a
-    sketch. Each project gets its own page with the full story and related
-    log entries. Source for everything lives at
+    Things I have built or am still working on. Source code is on
     <a href="https://github.com/tinkthemaker/" rel="me">github.com/tinkthemaker</a>.
   </p>
 
@@ -36,5 +34,5 @@ const cls = { shipped: 'status-ship', wip: 'status-wip', idea: 'status-idea' };
     </>
   ))}
 
-  {sorted.length === 0 && <p><em>Nothing on the workbench yet.</em></p>}
+  {sorted.length === 0 && <p><em>No projects.</em></p>}
 </Base>

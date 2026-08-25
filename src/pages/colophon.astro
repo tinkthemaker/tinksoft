@@ -14,12 +14,11 @@ const oldest = posts.reduce(
 );
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
 ---
-<Base title="colophon — TinkSoft" description="How this site is built, and the site measuring itself at build time.">
+<Base title="colophon — TinkSoft" description="Build details and current output size.">
   <h1>colophon</h1>
   <p>
-    How this site is made, and the site measuring itself. Every number below
-    is computed at build time by the site's own build script. No analytics
-    were involved.
+    Build details. The numbers below are generated during each production
+    build.
   </p>
 
   <h2>the numbers</h2>
@@ -31,51 +30,31 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
     <tr><td class="date">javascript</td><td>0 bytes shipped, ever</td></tr>
     <tr><td class="date">requests</td><td>2 per page (document + counter.svg; CSS and favicon inlined)</td></tr>
     <tr><td class="date">log entries</td><td>{posts.length} posts, {words.toLocaleString()} words since {fmt(oldest)}</td></tr>
-    <tr><td class="date">projects</td><td>{projects.length} on the workbench</td></tr>
+    <tr><td class="date">projects</td><td>{projects.length}</td></tr>
     <tr><td class="date">built</td><td>@BUILT_AT@ in @BUILD_S@s</td></tr>
   </table>
 
   <h2>the counter</h2>
   <p>
-    The visitor counter in the footer is a static SVG that shows 0001337.
-    The original site incremented a flat-file counter via PHP on the
-    server; this Pages-hosted rebuild can't run PHP, so the counter is now
-    honest about being frozen in time. The number is preserved because
-    some traditions matter.
+    The counter is a static SVG. It always reads 0001337 and does not record
+    visits.
   </p>
 
   <h2>the manifest</h2>
   <p>
-    Every deploy ships a manifest of SHA-256 checksums for the whole site at
-    <a href="/checksums.txt">/checksums.txt</a>. If you want to check that
-    the page you're reading is the page I shipped, you can.
+    Every deploy includes SHA-256 checksums at
+    <a href="/checksums.txt">/checksums.txt</a>.
   </p>
 
   <h2>the stack</h2>
   <p>
-    Posts are markdown files. <a href="https://astro.build">Astro</a> turns
-    them into plain HTML at build time and is never shipped to your browser.
-    All CSS is hand-written and lives in one layout file. Fonts are whatever
-    monospace your machine already has. Hosted on GitHub Pages, deployed by a
-    GitHub Actions workflow on every push to main.
+    Posts are markdown files. <a href="https://astro.build">Astro</a> builds
+    them into static HTML. CSS is inlined. The site uses the system monospace
+    font and ships no client-side JavaScript. GitHub Pages hosts the output.
   </p>
   <p>
-    A <code>&lt;meta&gt;</code> tag enforces <code>Content-Security-Policy:
-    default-src 'none'</code> — this site is not allowed to load scripts,
-    fonts, frames, or anything else, even if it wanted to. (GitHub Pages
-    doesn't support custom HTTP headers, so the policy lives in the HTML
-    itself. Inline styles, self-hosted images, and data-URI images are the only
-    exceptions.)
-  </p>
-
-  <h2>the philosophy</h2>
-  <p>
-    Do a lot with a little. The demoscene fit whole worlds into 64 KB. A page
-    that fits in a single TCP round trip is this site's modest tribute to
-    that tradition.
-  </p>
-  <p>
-    The numbers above update on every deploy. If they ever get worse, that
-    goes in the <a href="/">build log</a> too.
+    A <code>&lt;meta&gt;</code> tag sets <code>Content-Security-Policy:
+    default-src 'none'</code>. Inline styles, local images, and data-URI images
+    are allowed. Everything else is blocked.
   </p>
 </Base>

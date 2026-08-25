@@ -1,17 +1,23 @@
 ---
 title: "aGrandAdventure"
 status: wip
-description: "Sword-and-planet procedural prose. Same no-LLM vow as PulpDescent, different world."
+description: "A deterministic sword-and-planet text adventure built without an LLM."
 started: 2026-04-15
 repo: https://github.com/tinkthemaker/aGrandAdventure
 tag: agrandadventure
 ---
 
-The sibling of [PulpDescent](/projects/pulpdescent/). Same engine, same vow
-(no LLM, deterministic prose), different world: sword-and-planet pulp in
-the Burroughs and Brackett tradition.
+A deterministic sword-and-planet text adventure built on the same engine as
+[PulpDescent](/projects/pulpdescent/). The prose is hand-authored or generated
+from rules. No LLM is used.
 
-The shared vow pushed the two projects apart in ways I didn't predict.
-PulpDescent leans into threat and tension. aGrandAdventure leans into
-wonder and distance. Writing its rulebook taught me more about the genre
-than reading it ever did.
+## goals
+
+- Reproducible runs from a seed
+- Procedural prose that can be inspected and tested
+- A sword-and-planet setting focused on exploration
+
+## current status
+
+In development. The core engine is shared with PulpDescent; the rules and
+content are separate.

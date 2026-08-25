@@ -64,43 +64,37 @@ out.push(rule('╔', '╗'));
 out.push(framed());
 for (const row of logo) out.push(framed(row, 'center'));
 out.push(framed());
-out.push(framed('.oO  TINKSOFT PROUDLY PRESENTS  Oo.', 'center'));
-out.push(framed('building software in public // est. 2026', 'center'));
+out.push(framed('TINKSOFT.COM // PERSONAL FILE // EST. 2026', 'center'));
 out.push(framed());
 
 out.push(section('RELEASE iNFO'));
 out.push(framed());
 out.push(field('RELEASE NAME', 'tinksoft.com'));
-out.push(field('TYPE', 'website / build log'));
-out.push(field('SUPPLiER', 'tink'));
-out.push(field('RELEASE DATE', '2026-06-09'));
-out.push(field('PLATFORM', 'any browser since ~1996'));
-out.push(field('SiZE', 'measured live at /colophon/'));
-out.push(field('JAVASCRiPT', '0 bytes -- none, never'));
-out.push(field('PROTECTiON', "CSP default-src 'none'"));
-out.push(field('FORMAT', 'static HTML / inline CSS'));
+out.push(field('TYPE', 'personal website'));
+out.push(field('OWNER', 'tink'));
+out.push(field('CREATED', '2026-06-09'));
+out.push(field('TOPiCS', 'software / security / games / other'));
+out.push(field('OUTPUT', 'static HTML / inline CSS'));
+out.push(field('CLiENT JS', '0 bytes'));
+out.push(field('TRACKiNG', 'none'));
+out.push(field('CSP', "default-src 'none'"));
 out.push(field('HOSTiNG', 'GitHub Pages'));
 out.push(framed());
 
-out.push(section('GROUP NOTES'));
+out.push(section('ABOUT'));
 out.push(framed());
-out.push(...wrap('Built in public. Every win, every bug, every weekend lost to a missing semicolon -- logged.'));
+out.push(...wrap('This is my personal site. I post notes on software, security, games, tools, and anything else that interests me.'));
 out.push(framed());
-out.push(...wrap('The constraint is the point: plain HTML, inline CSS, a strict CSP, no trackers, and no framework shipped to your browser. One document request, plus the frozen counter.'));
-out.push(framed());
-out.push(...wrap("Do a lot with a little. The demoscene fit whole worlds into 64 KB; a page that fits in a single TCP round trip is this site's modest tribute to that tradition."));
-out.push(framed());
-out.push(...wrap('One entry a week, minimum. No polish. No marketing. Just what happened.'));
+out.push(...wrap('There is no fixed subject and no posting schedule. If something is here, I wanted to write it down.'));
 out.push(framed());
 
-out.push(section('GREETZ FLY OUT TO'));
+out.push(section('iNDEX'));
 out.push(framed());
-out.push(...wrap('The demoscene . the old web . wiby.me . neocities . 512kb.club . textfiles.com . 16colo.rs . nownownow.com . everyone shipping small things in public . and you, for reading this far.'));
-out.push(framed());
-
-out.push(section("WE'RE LOOKiNG FOR"));
-out.push(framed());
-out.push(...wrap("Nothing, honestly. It's a one-wizard operation. But if you keep a build log of your own, drop a line and I'll link you on /links/."));
+out.push(field('POSTS', 'tinksoft.com/'));
+out.push(field('PROJECTS', 'tinksoft.com/projects/'));
+out.push(field('CURRENT', 'tinksoft.com/now/'));
+out.push(field('LiNKS', 'tinksoft.com/links/'));
+out.push(field('SOURCE', 'github.com/tinkthemaker/tinksoft'));
 out.push(framed());
 
 out.push(section('CONTACT'));
@@ -113,8 +107,7 @@ out.push(field('NFO', 'tinksoft.com/tinksoft.nfo'));
 out.push(framed());
 
 out.push(section('EOF'));
-out.push(framed('UTF-8 // MONOSPACE // 70 COLUMNS // 0 KB JS', 'center'));
-out.push(framed('tinksoft.com // est. 2026 // made by tink', 'center'));
+out.push(framed('END OF FILE // NO JAVASCRIPT // NO TRACKING', 'center'));
 out.push(rule('╚', '╝'));
 
 // GitHub Pages serves .nfo files without a charset; the UTF-8 signature keeps
