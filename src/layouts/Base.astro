@@ -13,7 +13,9 @@ const nav = [
   { href: '/about/', label: 'about', section: ['/about'] },
 ];
 const isHere = (section: string[]) =>
-  section.some((s) => (s === '/' ? path === '/' : path.startsWith(s)));
+  section.some((s) =>
+    s === '/' ? path === '/' : path === s || path.startsWith(`${s}/`)
+  );
 
 const footerLinks = [
   { href: '/rss.xml', label: 'rss' },
@@ -37,6 +39,7 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
   <link rel="icon" href={favicon} type="image/svg+xml" />
   <link rel="alternate" type="application/rss+xml" title="TinkSoft build log" href="/rss.xml" />
   <link rel="sitemap" href="/sitemap-index.xml" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:" />
   <meta name="theme-color" content="#f4f0e4" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#161613" media="(prefers-color-scheme: dark)" />
   <meta property="og:title" content={title} />

@@ -5,9 +5,9 @@ A 90s-style build log for working in public. Built with [Astro](https://astro.bu
 ## The numbers
 
 - **0 KB JavaScript** shipped to the browser
-- **1 HTTP request** per page — CSS and favicon are inlined into the HTML
-- **~2.5 KB gzipped** per page, ~18 KB gzipped for the entire site
-- Strict `Content-Security-Policy: default-src 'none'`
+- **2 HTTP requests** per page — the document and decorative counter; CSS and favicon are inlined
+- Build-time page-count and size measurements on the [colophon](https://tinksoft.com/colophon/)
+- `Content-Security-Policy: default-src 'none'` (via meta tag — GitHub Pages doesn't support custom HTTP headers)
 - Full dark mode via `prefers-color-scheme` — no toggle, no JS, no flash
 - RSS feed, sitemap, robots.txt, humans.txt, and a proper [.nfo file](https://tinksoft.com/tinksoft.nfo)
 - A [colophon](https://tinksoft.com/colophon/) where the site measures itself on every build
@@ -71,9 +71,10 @@ GitHub Actions builds and publishes to GitHub Pages on every push to `main`
 git add . && git commit -m "log: new post" && git push
 ```
 
-Domain setup (one-time): the `CNAME` file holds `tinksoft.com` and is copied
-into `dist/` by the workflow; point the DNS records at GitHub Pages at your
-registrar.
+Setup (one-time): GitHub repo → Settings → Pages → Build and deployment →
+Source → select **GitHub Actions**. Then add `tinksoft.com` as the custom domain
+and set the DNS records GitHub shows at your registrar. The workflow copies
+the repository's `CNAME` file into `dist/` for each deployment.
 
 ## Map
 

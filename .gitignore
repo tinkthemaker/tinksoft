@@ -1,6 +1,5 @@
 node_modules/
 dist/
 .astro/
-.vercel/
 .build-start
 .DS_Store

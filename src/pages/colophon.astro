@@ -29,7 +29,7 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
     <tr><td class="date">avg page</td><td>@AVG_GZ@ KB gzipped</td></tr>
     <tr><td class="date">heaviest page</td><td><a href="@HEAVIEST@">@HEAVIEST@</a> at @HEAVIEST_GZ@ KB gzipped</td></tr>
     <tr><td class="date">javascript</td><td>0 bytes shipped, ever</td></tr>
-    <tr><td class="date">requests</td><td>1 per page (CSS and favicon inlined); the counter is an inline SVG</td></tr>
+    <tr><td class="date">requests</td><td>2 per page (document + counter.svg; CSS and favicon inlined)</td></tr>
     <tr><td class="date">log entries</td><td>{posts.length} posts, {words.toLocaleString()} words since {fmt(oldest)}</td></tr>
     <tr><td class="date">projects</td><td>{projects.length} on the workbench</td></tr>
     <tr><td class="date">built</td><td>@BUILT_AT@ in @BUILD_S@s</td></tr>
@@ -48,9 +48,7 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
   <p>
     Every deploy ships a manifest of SHA-256 checksums for the whole site at
     <a href="/checksums.txt">/checksums.txt</a>. If you want to check that
-    the page you're reading is the page I shipped, you can. Before anything
-    is deployed, <a href="/projects/sigil/">Sigil</a> scans the repo so no
-    stray secrets ride along.
+    the page you're reading is the page I shipped, you can.
   </p>
 
   <h2>the stack</h2>
@@ -58,13 +56,16 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
     Posts are markdown files. <a href="https://astro.build">Astro</a> turns
     them into plain HTML at build time and is never shipped to your browser.
     All CSS is hand-written and lives in one layout file. Fonts are whatever
-    monospace your machine already has. Hosted on GitHub Pages, deployed by
-    a push to main.
+    monospace your machine already has. Hosted on GitHub Pages, deployed by a
+    GitHub Actions workflow on every push to main.
   </p>
   <p>
-    Security headers include <code>Content-Security-Policy: default-src 'none'</code>
-    — this site is not allowed to load scripts, fonts, frames, or anything
-    else, even if it wanted to.
+    A <code>&lt;meta&gt;</code> tag enforces <code>Content-Security-Policy:
+    default-src 'none'</code> — this site is not allowed to load scripts,
+    fonts, frames, or anything else, even if it wanted to. (GitHub Pages
+    doesn't support custom HTTP headers, so the policy lives in the HTML
+    itself. Inline styles, self-hosted images, and data-URI images are the only
+    exceptions.)
   </p>
 
   <h2>the philosophy</h2>
