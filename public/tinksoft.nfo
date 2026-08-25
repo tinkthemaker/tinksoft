@@ -1,82 +1,65 @@
-﻿  ██████████████████████████████████████████████████████████████
-  ██                                                          ██
-  ██   _____ ___ _   _ _  ______   ___  _____ _____           ██
-  ██  |_   _|_ _| \ | | |/ / ___| / _ \|  ___|_   _|         ██
-  ██    | |  | ||  \| | ' /\___ \| | | | |_    | |          ██
-  ██    | |  | || |\  | . \ ___) | |_| |  _|   | |          ██
-  ██    |_| |___|_| \_|_|\_\____/ \___/|_|     |_|          ██
-  ██                                                          ██
-  ██   .com // building software in public // est. 2026       ██
-  ██                                                          ██
-  ██████████████████████████████████████████████████████████████
-  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
-╔═[RELEASE iNFO]═════════════════════════════════════════════╗
-║                                                            ║
-║   RELEASE NAME..: tinksoft.com                             ║
-║   TYPE..........: website / build log                      ║
-║   SUPPLiER......: tink                                     ║
-║   RELEASE DATE..: 06-09-2026                               ║
-║   PLATFORM......: any browser since ~1996                  ║
-║   SiZE..........: measured at /colophon/                   ║
-║   JAVASCRiPT....: 0 bytes — none, never                    ║
-║   PROTECTiON....: CSP default-src none                     ║
-║   FORMAT........: static HTML, CSS inlined                 ║
-║   HOSTiNG.......: GitHub Pages                             ║
-║                                                            ║
-╚════════════════════════════════════════════════════════════╝
-
-╔═[GROUP NOTES]══════════════════════════════════════════════╗
-║                                                            ║
-║   built in public. every win, every bug, every             ║
-║   weekend lost to a missing semicolon — logged.            ║
-║                                                            ║
-║   the constraint is the point: plain HTML, CSS             ║
-║   inlined, favicon inlined, strict CSP, no                 ║
-║   trackers, no frameworks shipped to your                  ║
-║   browser. one document request, plus the counter.         ║
-║                                                            ║
-║   do a lot with a little. the demoscene fit                ║
-║   whole worlds into 64 KB. a page that fits in             ║
-║   a single TCP round trip is this site's modest            ║
-║   tribute to that tradition.                               ║
-║                                                            ║
-║   one entry a week, minimum. no polish, no                 ║
-║   marketing. just what happened.                           ║
-║                                                            ║
-╚════════════════════════════════════════════════════════════╝
-
-╔═[GREETZ FLY OUT TO]════════════════════════════════════════╗
-║                                                            ║
-║   the demoscene  .  the old web  .  wiby.me                ║
-║   neocities  .  512kb.club  .  textfiles.com               ║
-║   16colo.rs  .  nownownow.com  .  everyone                 ║
-║   shipping small things in public  .  you,                 ║
-║   for reading this far                                     ║
-║                                                            ║
-╚════════════════════════════════════════════════════════════╝
-
-╔═[WE'RE LOOKiNG FOR]════════════════════════════════════════╗
-║                                                            ║
-║   nothing, honestly. it's a one-wizard                     ║
-║   operation. but if you keep a build log of                ║
-║   your own, drop a line and i'll link you on               ║
-║   /links/.                                                 ║
-║                                                            ║
-╚════════════════════════════════════════════════════════════╝
-
-╔═[CONTACT]══════════════════════════════════════════════════╗
-║                                                            ║
-║   WEB..........: https://tinksoft.com                      ║
-║   E-MAiL.......: tinkxiu@gmail.com                         ║
-║   GiTHUB.......: github.com/tinkthemaker                   ║
-║   RSS..........: tinksoft.com/rss.xml                      ║
-║   NFO..........: tinksoft.com/tinksoft.nfo                 ║
-║                                                            ║
-╚════════════════════════════════════════════════════════════╝
-
-   ┌──────────────────────────────────────────────────────────────┐
-   │  if you can read this, you're viewing it in the right font   │
-   │  CP437 / VGA — anything else and the boxes look wrong        │
-   └──────────────────────────────────────────────────────────────┘
-
-                    tinksoft.com // est. 2026 // made by tink
+﻿╔════════════════════════════════════════════════════════════════════╗
+║                                                                    ║
+║  ████████╗██╗███╗   ██╗██╗  ██╗███████╗ ██████╗ ███████╗████████╗  ║
+║  ╚══██╔══╝██║████╗  ██║██║ ██╔╝██╔════╝██╔═══██╗██╔════╝╚══██╔══╝  ║
+║      ██║   ██║██╔██╗ ██║█████╔╝ ███████╗██║   ██║█████╗     ██║    ║
+║      ██║   ██║██║╚██╗██║██╔═██╗ ╚════██║██║   ██║██╔══╝     ██║    ║
+║      ██║   ██║██║ ╚████║██║  ██╗███████║╚██████╔╝██║        ██║    ║
+║      ╚═╝   ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝        ╚═╝    ║
+║                                                                    ║
+║                .oO  TINKSOFT PROUDLY PRESENTS  Oo.                 ║
+║              building software in public // est. 2026              ║
+║                                                                    ║
+╠═[ RELEASE iNFO ]═══════════════════════════════════════════════════╣
+║                                                                    ║
+║   RELEASE NAME.. : tinksoft.com                                    ║
+║   TYPE.......... : website / build log                             ║
+║   SUPPLiER...... : tink                                            ║
+║   RELEASE DATE.. : 2026-06-09                                      ║
+║   PLATFORM...... : any browser since ~1996                         ║
+║   SiZE.......... : measured live at /colophon/                     ║
+║   JAVASCRiPT.... : 0 bytes -- none, never                          ║
+║   PROTECTiON.... : CSP default-src 'none'                          ║
+║   FORMAT........ : static HTML / inline CSS                        ║
+║   HOSTiNG....... : GitHub Pages                                    ║
+║                                                                    ║
+╠═[ GROUP NOTES ]════════════════════════════════════════════════════╣
+║                                                                    ║
+║   Built in public. Every win, every bug, every weekend lost to a   ║
+║   missing semicolon -- logged.                                     ║
+║                                                                    ║
+║   The constraint is the point: plain HTML, inline CSS, a strict    ║
+║   CSP, no trackers, and no framework shipped to your browser. One  ║
+║   document request, plus the frozen counter.                       ║
+║                                                                    ║
+║   Do a lot with a little. The demoscene fit whole worlds into 64   ║
+║   KB; a page that fits in a single TCP round trip is this site's   ║
+║   modest tribute to that tradition.                                ║
+║                                                                    ║
+║   One entry a week, minimum. No polish. No marketing. Just what    ║
+║   happened.                                                        ║
+║                                                                    ║
+╠═[ GREETZ FLY OUT TO ]══════════════════════════════════════════════╣
+║                                                                    ║
+║   The demoscene . the old web . wiby.me . neocities . 512kb.club . ║
+║   textfiles.com . 16colo.rs . nownownow.com . everyone shipping    ║
+║   small things in public . and you, for reading this far.          ║
+║                                                                    ║
+╠═[ WE'RE LOOKiNG FOR ]══════════════════════════════════════════════╣
+║                                                                    ║
+║   Nothing, honestly. It's a one-wizard operation. But if you keep  ║
+║   a build log of your own, drop a line and I'll link you on        ║
+║   /links/.                                                         ║
+║                                                                    ║
+╠═[ CONTACT ]════════════════════════════════════════════════════════╣
+║                                                                    ║
+║   WEB........... : https://tinksoft.com                            ║
+║   E-MAiL........ : tinkxiu@gmail.com                               ║
+║   GiTHUB........ : github.com/tinkthemaker                         ║
+║   RSS........... : tinksoft.com/rss.xml                            ║
+║   NFO........... : tinksoft.com/tinksoft.nfo                       ║
+║                                                                    ║
+╠═[ EOF ]════════════════════════════════════════════════════════════╣
+║            UTF-8 // MONOSPACE // 70 COLUMNS // 0 KB JS             ║
+║             tinksoft.com // est. 2026 // made by tink              ║
+╚════════════════════════════════════════════════════════════════════╝
