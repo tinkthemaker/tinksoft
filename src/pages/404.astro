@@ -2,13 +2,22 @@
 import Base from '../layouts/Base.astro';
 ---
 <Base title="404 — TinkSoft" description="There's nothing here.">
-  <h1>404 // not found</h1>
-  <p>There is nothing at this address.</p>
-  <nav aria-label="ways out">
-    <span class="navitem">[<a href="/">posts</a>]</span>
-    <span class="navitem">[<a href="/projects/">projects</a>]</span>
-    <span class="navitem">[<a href="/now/">now</a>]</span>
-    <span class="navitem">[<a href="/about/">about</a>]</span>
-    <span class="navitem">[<a href="/links/">links</a>]</span>
-  </nav>
+  <section class="lost scene-panel">
+    <p class="scene-label">[CONNECTION LOST]</p>
+    <p class="code">ERROR 404 // NO CARRIER</p>
+    <h1>file not found</h1>
+    <p>There is nothing at this address. The index is still online.</p>
+    <nav aria-label="ways out">
+      <a class="action" href="/">posts</a>
+      <a class="action" href="/projects/">projects</a>
+      <a class="action" href="/archive/">archive</a>
+      <a class="action" href="/now/">now</a>
+    </nav>
+  </section>
+  <style>
+    .lost { max-width: 44rem; margin: 4rem auto; border-left: 4px solid var(--accent-2); }
+    .code { color: var(--accent-2); font-size: 0.8rem; font-weight: bold; letter-spacing: 0.08em; }
+    .lost h1 { margin: 0.35rem 0; font-size: clamp(2rem, 8vw, 4rem); }
+    .lost nav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
+  </style>
 </Base>

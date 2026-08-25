@@ -1,0 +1,92 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('blog');
+const slug = (tag: string) =>
+  tag.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
+const tags = Array.from(
+  posts.reduce((index, post) => {
+    for (const tag of post.data.tags) {
+      const key = slug(tag);
+      const entry = index.get(key) ?? { name: tag, count: 0 };
+      entry.count += 1;
+      index.set(key, entry);
+    }
+    return index;
+  }, new Map<string, { name: string; count: number }>())
+).map(([path, data]) => ({ path, ...data }))
+  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+
+const maxCount = Math.max(...tags.map((tag) => tag.count), 1);
+---
+<Base
+  title="tags — TinkSoft"
+  description="Browse TinkSoft posts by subject."
+>
+  <header class="page-head">
+    <p class="eyebrow">[SUBJECT INDEX]</p>
+    <h1>tags</h1>
+    <p>{tags.length} subject{tags.length === 1 ? '' : 's'} across {posts.length} post{posts.length === 1 ? '' : 's'}. Or scan the <a href="/archive/">full archive</a>.</p>
+  </header>
+
+  <ul class="tag-grid">
+    {tags.map((tag) => (
+      <li>
+        <a href={`/tags/${tag.path}/`}>
+          <span class="name">#{tag.name}</span>
+          <span class="meter" aria-hidden="true">
+            <span style={`--size: ${(tag.count / maxCount) * 100}%`}></span>
+          </span>
+          <span class="count">{String(tag.count).padStart(2, '0')} post{tag.count === 1 ? '' : 's'}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  {tags.length === 0 && <p><em>No tags indexed.</em></p>}
+
+  <style>
+    .page-head { margin-bottom: 1.5rem; }
+    .page-head h1 { margin: 0.15rem 0 0.5rem; }
+    .eyebrow {
+      margin: 0;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: bold;
+      letter-spacing: 0.12em;
+    }
+    .tag-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.7rem;
+      margin: 2rem 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .tag-grid a {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 0.4rem 0.8rem;
+      height: 100%;
+      border: 1px solid var(--rule);
+      padding: 0.75rem;
+      text-decoration: none;
+    }
+    .tag-grid a:hover .name { text-decoration: underline; }
+    .name { min-width: 0; overflow-wrap: anywhere; font-weight: bold; }
+    .count { color: var(--muted); font-size: 0.75rem; white-space: nowrap; }
+    .meter {
+      grid-column: 1 / -1;
+      display: block;
+      height: 3px;
+      background: var(--badge-bg);
+    }
+    .meter span { display: block; width: var(--size); height: 100%; background: var(--accent); }
+    .tag-grid a:hover .count { color: inherit; }
+    @media (max-width: 32rem) {
+      .tag-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</Base>

@@ -3,7 +3,6 @@ title: "TPing"
 status: shipped
 description: "Monitors store devices and records reachability and response time."
 started: 2025-07-15
-repo: https://github.com/tinkthemaker/TPing
 tag: tping
 ---
 

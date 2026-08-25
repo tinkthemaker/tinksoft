@@ -3,7 +3,6 @@ title: "Cleanpaste"
 status: shipped
 description: "Cleans clipboard text by removing invisible characters, normalizing punctuation, and stripping tracking parameters."
 started: 2026-01-10
-repo: https://github.com/tinkthemaker/cleanpaste
 tag: cleanpaste
 ---
 

@@ -1,27 +1,48 @@
 ---
 import Base from '../layouts/Base.astro';
-// Add sites here when they are worth keeping.
+const sites = [
+  { href: 'https://wiby.me', name: 'wiby.me', code: 'SEARCH', description: 'A search engine for small, independent sites.' },
+  { href: 'https://neocities.org', name: 'neocities', code: 'HOST', description: 'Hosting for hand-built personal sites.' },
+  { href: 'https://512kb.club', name: '512kb.club', code: 'INDEX', description: 'A directory of sites under 512 KB.' },
+  { href: 'http://textfiles.com', name: 'textfiles.com', code: 'ARCHIVE', description: 'An archive of BBS-era text files.' },
+  { href: 'https://16colo.rs', name: '16colo.rs', code: 'SCENE', description: 'The ANSI and ASCII art scene archive, 1989 to now.' },
+  { href: 'https://nownownow.com', name: 'nownownow', code: 'STATUS', description: 'A directory of /now pages.' },
+];
 ---
 <Base title="links — TinkSoft" description="Sites I use or want to remember.">
-  <h1>links</h1>
-  <p>
-    Sites I use or want to remember.
-  </p>
+  <header class="links-head scene-panel">
+    <p class="scene-label">[OUTBOUND NODES]</p>
+    <p class="eyebrow">KNOWN GOOD // MANUAL LIST</p>
+    <h1>links</h1>
+    <p>Sites I use or want to remember.</p>
+  </header>
 
-  <h2>sites</h2>
-  <table class="log">
-    <tr><td class="date"><a href="https://wiby.me">wiby.me</a></td>
-      <td>A search engine for small, independent sites.</td></tr>
-    <tr><td class="date"><a href="https://neocities.org">neocities</a></td>
-      <td>Hosting for hand-built personal sites.</td></tr>
-    <tr><td class="date"><a href="https://512kb.club">512kb.club</a></td>
-      <td>A directory of sites under 512 KB.</td></tr>
-    <tr><td class="date"><a href="http://textfiles.com">textfiles.com</a></td>
-      <td>An archive of BBS-era text files.</td></tr>
-    <tr><td class="date"><a href="https://16colo.rs">16colo.rs</a></td>
-      <td>The ANSI and ASCII art scene archive, 1989 to now.</td></tr>
-    <tr><td class="date"><a href="https://nownownow.com">nownownow</a></td>
-      <td>The directory of /now pages. Mine is <a href="/now/">here</a>.</td></tr>
-  </table>
+  <div class="link-grid">
+    {sites.map((site, index) => (
+      <article class="link-card">
+        <p class="node-id">NODE {String(index + 1).padStart(2, '0')} // {site.code}</p>
+        <h2><a href={site.href}>{site.name}</a></h2>
+        <p>{site.description}</p>
+      </article>
+    ))}
+  </div>
+
+  <p class="now-link">LOCAL NODE :: my current page is <a href="/now/">/now/</a></p>
+
+  <style>
+    .links-head { margin-bottom: 2rem; border-left: 4px solid var(--hot); }
+    .links-head h1 { margin: 0.25rem 0; }
+    .links-head > p:last-child { margin: 0; color: var(--muted); }
+    .link-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
+    .link-card { padding: 1rem; border: 1px solid var(--rule); background: var(--panel); }
+    .link-card:hover { border-color: var(--accent); box-shadow: 3px 3px 0 var(--shadow); transform: translate(-1px, -1px); }
+    .node-id { margin: 0; color: var(--muted); font-size: 0.68rem; letter-spacing: 0.06em; }
+    .link-card h2 { margin: 0.35rem 0; font-size: 1rem; }
+    .link-card h2::before { content: ''; }
+    .link-card p:last-child { margin: 0; color: var(--muted); font-size: 0.84rem; }
+    .now-link { margin-top: 1.5rem; padding: 0.6rem; border-block: 1px solid var(--rule); color: var(--muted); font-size: 0.78rem; }
+    @media (max-width: 38rem) { .link-grid { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) { .link-card:hover { transform: none; } }
+  </style>
 
 </Base>

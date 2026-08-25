@@ -6,27 +6,295 @@ const posts = (await getCollection('blog')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
-const fmt = (d: Date) =>
-  d.toISOString().slice(0, 10);
+const [latest, ...archive] = posts;
+const fmt = (date: Date) => date.toISOString().slice(0, 10);
+const tagPath = (tag: string) =>
+  tag.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 ---
 <Base title="TinkSoft — posts">
-  <h1>posts</h1>
-  <p>
-    Notes on software, security, games, and whatever else has my attention.
-    Newest first.
-  </p>
+  <header class="index-header">
+    <p class="kicker">TINKSOFT INDEX // PERSONAL TRANSMISSIONS</p>
+    <h1>posts</h1>
+    <p class="lede">
+      Field notes on software, security, games, and whatever else has my attention.
+    </p>
+    <p class="index-status" aria-label={`${posts.length} posts, sorted newest first`}>
+      <span>FILES: {String(posts.length).padStart(2, '0')}</span>
+      <span>ORDER: NEWEST FIRST</span>
+      <a href="/rss.xml">RSS FEED</a>
+    </p>
+  </header>
 
-  <table class="log">
-    {posts.map((post) => (
-      <tr>
-        <td class="date">{fmt(post.data.date)}</td>
-        <td>
-          <a href={`/log/${post.id}/`}>{post.data.title}</a>
-          {post.data.description && <><br /><span class="post-meta">{post.data.description}</span></>}
-        </td>
-      </tr>
-    ))}
-  </table>
+  {latest ? (
+    <section class="module latest" aria-labelledby="latest-label">
+      <header class="module-header">
+        <h2 id="latest-label">[LATEST DROP]</h2>
+        <time datetime={latest.data.date.toISOString()}>{fmt(latest.data.date)}</time>
+      </header>
 
-  {posts.length === 0 && <p><em>No posts.</em></p>}
+      <article class="release">
+        <p class="file-id">FILE // {latest.id}.txt</p>
+        <h3><a href={`/log/${latest.id}/`}>{latest.data.title}</a></h3>
+        {latest.data.description && <p class="release-description">{latest.data.description}</p>}
+
+        {latest.data.tags.length > 0 && (
+          <ul class="tags" aria-label="tags">
+            {latest.data.tags.map((tag) => <li><a href={`/tags/${tagPath(tag)}/`}>#{tag}</a></li>)}
+          </ul>
+        )}
+
+        <nav class="release-actions" aria-label={`formats for ${latest.data.title}`}>
+          [<a href={`/log/${latest.id}/`}>read post</a>]
+          [<a href={`/log/${latest.id}.txt`}>plain text</a>]
+        </nav>
+      </article>
+    </section>
+  ) : (
+    <section class="module empty" aria-labelledby="empty-label">
+      <header class="module-header">
+        <h2 id="empty-label">[ARCHIVE]</h2>
+      </header>
+      <p>NO FILES FOUND.</p>
+    </section>
+  )}
+
+  {archive.length > 0 && (
+    <section class="module archive" aria-labelledby="archive-label">
+      <header class="module-header">
+        <h2 id="archive-label">[ARCHIVE]</h2>
+        <span>{archive.length} {archive.length === 1 ? 'FILE' : 'FILES'}</span>
+      </header>
+
+      <ol class="archive-list">
+        {archive.map((post, index) => (
+          <li>
+            <article class="archive-entry">
+              <div class="archive-number" aria-hidden="true">
+                {String(index + 1).padStart(2, '0')}
+              </div>
+              <div class="archive-body">
+                <div class="archive-heading">
+                  <h3><a href={`/log/${post.id}/`}>{post.data.title}</a></h3>
+                  <time datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
+                </div>
+                {post.data.description && <p>{post.data.description}</p>}
+                <div class="archive-footer">
+                  {post.data.tags.length > 0 && (
+                    <ul class="tags" aria-label="tags">
+                      {post.data.tags.map((tag) => <li><a href={`/tags/${tagPath(tag)}/`}>#{tag}</a></li>)}
+                    </ul>
+                  )}
+                  <a class="text-link" href={`/log/${post.id}.txt`} aria-label={`${post.data.title}, plain text`}>
+                    [.txt]
+                  </a>
+                </div>
+              </div>
+            </article>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )}
+
+  <style>
+    .index-header { margin-bottom: 2.25rem; }
+
+    .kicker,
+    .file-id {
+      margin: 0;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+    }
+
+    h1 {
+      margin: 0.25rem 0 0.6rem;
+      font-size: clamp(1.8rem, 6vw, 2.6rem);
+      letter-spacing: -0.04em;
+    }
+
+    .lede {
+      max-width: 38rem;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.02rem;
+    }
+
+    .index-status {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem 1rem;
+      margin: 1.25rem 0 0;
+      padding: 0.45rem 0.65rem;
+      border-block: 1px solid var(--rule);
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+    }
+
+    .index-status a {
+      margin-left: auto;
+      font-weight: bold;
+    }
+
+    .module { margin-top: 2.4rem; }
+
+    .module-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--accent);
+    }
+
+    .module-header h2 {
+      margin: 0;
+      padding: 0.18rem 0.55rem;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+    }
+
+    .module-header time,
+    .module-header > span {
+      padding-right: 0.2rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .release {
+      position: relative;
+      padding: 1.25rem;
+      border: 1px solid var(--rule);
+      border-left: 4px solid var(--accent);
+      background: color-mix(in srgb, var(--badge-bg) 38%, transparent);
+    }
+
+    .release::after {
+      position: absolute;
+      right: 0.5rem;
+      bottom: 0.3rem;
+      color: var(--rule);
+      content: '//';
+      font-weight: bold;
+    }
+
+    .release h3 {
+      margin: 0.35rem 0 0;
+      font-size: clamp(1.25rem, 4vw, 1.65rem);
+    }
+
+    .release-description {
+      max-width: 36rem;
+      margin: 0.75rem 0;
+      color: var(--ink);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem 0.55rem;
+      margin: 0.65rem 0;
+      padding: 0;
+      color: var(--muted);
+      font-size: 0.75rem;
+      list-style: none;
+    }
+
+    .tags a { color: inherit; text-decoration: none; }
+    .tags a:hover { color: var(--bg); }
+
+    .release-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 1rem;
+      font-size: 0.82rem;
+      font-weight: bold;
+    }
+
+    .archive-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .archive-list > li { border-bottom: 1px dotted var(--rule); }
+    .archive-list > li:first-child { border-top: 1px dotted var(--rule); }
+
+    .archive-entry {
+      display: grid;
+      grid-template-columns: 2rem minmax(0, 1fr);
+      gap: 0.75rem;
+      padding: 1rem 0.25rem;
+    }
+
+    .archive-number {
+      padding-top: 0.1rem;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: bold;
+    }
+
+    .archive-heading {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1rem;
+      align-items: baseline;
+    }
+
+    .archive-heading h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .archive-heading time {
+      color: var(--muted);
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    .archive-body > p {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    .archive-footer {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .archive-footer .tags { margin-bottom: 0; }
+
+    .text-link {
+      flex: none;
+      color: var(--muted);
+      font-size: 0.72rem;
+    }
+
+    .empty p { color: var(--muted); }
+
+    @media (max-width: 34rem) {
+      .index-status a { margin-left: 0; }
+
+      .archive-heading {
+        grid-template-columns: 1fr;
+        gap: 0.2rem;
+      }
+
+      .archive-entry {
+        grid-template-columns: 1.5rem minmax(0, 1fr);
+        gap: 0.5rem;
+      }
+
+      .release { padding: 1rem; }
+    }
+  </style>
 </Base>

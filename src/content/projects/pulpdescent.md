@@ -3,7 +3,6 @@ title: "PulpDescent"
 status: wip
 description: "A deterministic text dungeon crawler in Godot 4, built without an LLM."
 started: 2026-03-01
-repo: https://github.com/tinkthemaker/PulpDescent
 tag: pulpdescent
 ---
 

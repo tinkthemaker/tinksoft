@@ -3,38 +3,70 @@ import Base from "../layouts/Base.astro";
 ---
 
 <Base title="about — TinkSoft">
-    <h1>about</h1>
-    <p>I'm Tink. This is my personal site.</p>
-    <p>
-        I post notes about software, security, games, tools I use, and whatever
-        else has my attention. There is no fixed subject or schedule.
-    </p>
-    <p>
-        Most of my code is on <a href="https://github.com/tinkthemaker/">GitHub</a>.
-        Longer notes and project updates live here.
-    </p>
-    <h2>the site</h2>
-    <p>
-        I wanted a small site I control. It is plain HTML, has no client-side
-        JavaScript, and does not collect analytics.
-    </p>
-    <h2>link to me</h2>
-    <p>
+    <header class="about-head scene-panel">
+        <p class="scene-label">[OPERATOR FILE]</p>
+        <p class="eyebrow">HANDLE // TINK</p>
+        <h1>about</h1>
+        <p>I'm Tink. This is my personal site.</p>
+    </header>
+
+    <div class="about-grid">
+        <section class="scene-panel">
+            <p class="scene-label">[INTERESTS]</p>
+            <p>
+                I post notes about software, security, games, tools I use, and
+                whatever else has my attention. There is no fixed subject or schedule.
+            </p>
+            <p>
+                Most of my code is on <a href="https://github.com/tinkthemaker/">GitHub</a>.
+                Longer notes and project updates live here.
+            </p>
+        </section>
+        <section class="scene-panel specs">
+            <p class="scene-label">[SITE SPECS]</p>
+            <dl>
+                <div><dt>owner</dt><dd>tink</dd></div>
+                <div><dt>output</dt><dd>static html</dd></div>
+                <div><dt>tracking</dt><dd>none</dd></div>
+                <div><dt>schedule</dt><dd>when ready</dd></div>
+            </dl>
+        </section>
+    </div>
+
+    <section class="link-module scene-panel">
+        <p class="scene-label">[LINK BUTTON]</p>
+        <div class="button-row">
         <img
             src="/badge.svg"
             width="88"
             height="31"
             alt="TINKSOFT 88x31 button"
         />
-        This is the 88&times;31 button:
-    </p>
-    <div class="content">
-        <pre>&lt;a href="https://tinksoft.com"&gt;&lt;img
+        <p>Use the 88&times;31 button if you want to link here.</p>
+        </div>
+        <div class="content"><pre>&lt;a href="https://tinksoft.com"&gt;&lt;img
   src="https://tinksoft.com/badge.svg"
   width="88" height="31" alt="TINKSOFT"&gt;&lt;/a&gt;</pre>
-    </div>
-    <h2>get in touch</h2>
-    <p>
-        Email: <a href="mailto:tinkxiu@gmail.com">tinkxiu@gmail.com</a>
-    </p>
+        </div>
+    </section>
+
+    <p class="contact">CONTACT :: <a href="mailto:tinkxiu@gmail.com">tinkxiu@gmail.com</a></p>
+
+    <style>
+        .about-head { margin-bottom: 2rem; border-left: 4px solid var(--accent-2); }
+        .about-head h1 { margin: 0.25rem 0; }
+        .about-head > p:last-child { margin: 0; color: var(--muted); }
+        .about-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.8fr); gap: 1.25rem; }
+        .about-grid section p:last-child { margin-bottom: 0; }
+        .specs dl { margin: 0; font-size: 0.78rem; }
+        .specs dl div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.35rem 0; border-bottom: 1px dotted var(--rule); }
+        .specs dt { color: var(--muted); text-transform: uppercase; }
+        .specs dd { margin: 0; color: var(--accent); text-align: right; }
+        .link-module { margin-top: 2rem; }
+        .button-row { display: flex; align-items: center; gap: 1rem; }
+        .button-row p { margin: 0; color: var(--muted); }
+        .content pre { margin-bottom: 0; }
+        .contact { padding: 0.65rem 0; border-block: 1px solid var(--rule); color: var(--muted); font-size: 0.8rem; }
+        @media (max-width: 48rem) { .about-grid { grid-template-columns: 1fr; } }
+    </style>
 </Base>

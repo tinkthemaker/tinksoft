@@ -1,0 +1,95 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+type TagPage = {
+  name: string;
+  path: string;
+  posts: CollectionEntry<'blog'>[];
+};
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const tags = new Map<string, TagPage>();
+  const slug = (tag: string) =>
+    tag.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
+  for (const post of posts) {
+    for (const name of post.data.tags) {
+      const path = slug(name);
+      const entry = tags.get(path) ?? { name, path, posts: [] };
+      entry.posts.push(post);
+      tags.set(path, entry);
+    }
+  }
+
+  return Array.from(tags.values()).map((tag) => ({
+    params: { tag: tag.path },
+    props: {
+      ...tag,
+      posts: tag.posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    },
+  }));
+}
+
+const { name, posts } = Astro.props as TagPage;
+const fmt = (date: Date) => date.toISOString().slice(0, 10);
+---
+<Base
+  title={`#${name} — TinkSoft`}
+  description={`TinkSoft posts tagged ${name}.`}
+>
+  <header class="page-head">
+    <p class="eyebrow">[TAG CHANNEL]</p>
+    <h1>#{name}</h1>
+    <p>{posts.length} post{posts.length === 1 ? '' : 's'} in this channel. <a href="/tags/">all tags</a> / <a href="/archive/">archive</a></p>
+  </header>
+
+  <ol class="entries">
+    {posts.map((post, index) => (
+      <li>
+        <div class="sequence" aria-hidden="true">{String(index + 1).padStart(2, '0')}</div>
+        <article>
+          <time datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
+          <h2><a href={`/log/${post.id}/`}>{post.data.title}</a></h2>
+          {post.data.description && <p>{post.data.description}</p>}
+        </article>
+      </li>
+    ))}
+  </ol>
+
+  <style>
+    .page-head {
+      border: 1px solid var(--rule);
+      padding: 1rem;
+      margin-bottom: 1.7rem;
+      box-shadow: 3px 3px 0 var(--badge-bg);
+    }
+    .page-head h1 { margin: 0.15rem 0 0.5rem; color: var(--accent); }
+    .page-head p:last-child { margin-bottom: 0; }
+    .eyebrow {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: bold;
+      letter-spacing: 0.12em;
+    }
+    .entries { margin: 0; padding: 0; list-style: none; }
+    .entries > li {
+      display: grid;
+      grid-template-columns: 2.2rem minmax(0, 1fr);
+      gap: 0.75rem;
+      border-bottom: 1px dashed var(--rule);
+      padding: 1rem 0;
+    }
+    .entries > li:first-child { padding-top: 0; }
+    .sequence { color: var(--accent); font-size: 0.8rem; }
+    time { color: var(--muted); font-size: 0.8rem; }
+    h2 { margin: 0.15rem 0 0.25rem; font-size: 1.05rem; }
+    article p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+    @media (max-width: 26rem) {
+      .entries > li { grid-template-columns: 1.7rem minmax(0, 1fr); gap: 0.45rem; }
+      .page-head { padding: 0.8rem; box-shadow: 2px 2px 0 var(--badge-bg); }
+    }
+  </style>
+</Base>

@@ -4,19 +4,47 @@ import Base from '../layouts/Base.astro';
 const updated = '2026-08-24';
 ---
 <Base title="now — TinkSoft" description="What Tink is focused on right now.">
-  <h1>now</h1>
-  <p class="post-meta">updated {updated}</p>
-  <p>A short list of what I am working on and reading.</p>
+  <header class="now-head scene-panel">
+    <p class="scene-label">[CURRENT STATE]</p>
+    <p class="eyebrow">OPERATOR // TINK</p>
+    <h1>now</h1>
+    <p>A short list of what I am working on and reading.</p>
+    <p class="stamp"><span class="led" aria-hidden="true"></span>UPDATED {updated}</p>
+  </header>
 
-  <h2>current</h2>
-  <p>
-    Cleaning up tinksoft.com and moving notes into it.
-  </p>
-  <p>
-    PulpDescent is in the content-and-balance phase, which means playing my
-    own dungeon for hours and writing down where it bores me.
-  </p>
+  <div class="now-grid">
+    <section class="scene-panel">
+      <p class="scene-label">[ACTIVE QUEUE]</p>
+      <ol class="queue">
+        <li>
+          <strong>tinksoft.com</strong>
+          <span>Cleaning up the site and moving notes into it.</span>
+        </li>
+        <li>
+          <strong>PulpDescent</strong>
+          <span>Playing through the content-and-balance phase and recording where it drags.</span>
+        </li>
+      </ol>
+    </section>
 
-  <h2>reading</h2>
-  <p>AI model releases, developer tools, and old scene zines.</p>
+    <section class="scene-panel">
+      <p class="scene-label">[INPUT BUFFER]</p>
+      <p>AI model releases, developer tools, and old scene zines.</p>
+    </section>
+  </div>
+
+  <style>
+    .now-head { margin-bottom: 2rem; border-left: 4px solid var(--accent); }
+    .now-head h1 { margin: 0.25rem 0; }
+    .now-head > p:not(.scene-label, .eyebrow, .stamp) { margin: 0; color: var(--muted); }
+    .stamp { margin: 1rem 0 0; color: var(--ship); font-size: 0.72rem; font-weight: bold; letter-spacing: 0.06em; }
+    .now-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(14rem, 0.8fr); gap: 1.25rem; align-items: start; }
+    .queue { margin: 0; padding: 0; list-style: none; counter-reset: queue; }
+    .queue li { display: grid; grid-template-columns: 2rem 10rem minmax(0, 1fr); gap: 0.75rem; padding: 0.8rem 0; border-bottom: 1px dotted var(--rule); counter-increment: queue; }
+    .queue li::before { content: counter(queue, decimal-leading-zero); color: var(--accent); font-size: 0.72rem; }
+    .queue span { color: var(--muted); }
+    .now-grid section > p:last-child { margin-bottom: 0; }
+    @media (max-width: 48rem) { .now-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 34rem) { .queue li { grid-template-columns: 1.5rem 1fr; } .queue span { grid-column: 2; } }
+  </style>
 </Base>

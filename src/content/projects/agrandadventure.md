@@ -3,7 +3,6 @@ title: "aGrandAdventure"
 status: wip
 description: "A deterministic sword-and-planet text adventure built without an LLM."
 started: 2026-04-15
-repo: https://github.com/tinkthemaker/aGrandAdventure
 tag: agrandadventure
 ---
 

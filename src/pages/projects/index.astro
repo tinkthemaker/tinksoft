@@ -3,36 +3,143 @@ import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 
 const projects = await getCollection('projects');
+const posts = await getCollection('blog');
 const order = { wip: 0, shipped: 1, idea: 2 };
-const started = (p: (typeof projects)[number]) =>
-  p.data.started ? p.data.started.valueOf() : 0;
+const statusName = { wip: 'active', shipped: 'shipped', idea: 'queued' };
+const statusCode = { wip: 'RUN', shipped: 'OK', idea: 'WAIT' };
+const statusNote = { wip: 'work in progress', shipped: 'released and in use', idea: 'not started' };
+const fmt = (date: Date) => date.toISOString().slice(0, 10);
+const started = (project: (typeof projects)[number]) => project.data.started?.valueOf() ?? 0;
+const relatedPosts = (tag?: string) => tag ? posts.filter((post) => post.data.tags.includes(tag)) : [];
+const lastUpdate = (project: (typeof projects)[number]) => {
+  const dates = relatedPosts(project.data.tag).map((post) => post.data.date.valueOf());
+  return dates.length ? new Date(Math.max(...dates)) : project.data.started;
+};
 const sorted = [...projects].sort(
-  (a, b) =>
-    order[a.data.status] - order[b.data.status] || started(b) - started(a)
+  (a, b) => order[a.data.status] - order[b.data.status] || started(b) - started(a)
 );
-const label = { shipped: '[SHIPPED]', wip: '[WIP]', idea: '[IDEA]' };
-const cls = { shipped: 'status-ship', wip: 'status-wip', idea: 'status-idea' };
+const counts = {
+  wip: projects.filter((project) => project.data.status === 'wip').length,
+  shipped: projects.filter((project) => project.data.status === 'shipped').length,
+  idea: projects.filter((project) => project.data.status === 'idea').length,
+};
 ---
 <Base title="projects — TinkSoft">
-  <h1>projects</h1>
-  <p>
-    Things I have built or am still working on. Source code is on
-    <a href="https://github.com/tinkthemaker/" rel="me">github.com/tinkthemaker</a>.
-  </p>
+  <header class="project-header">
+    <p class="eyebrow">TINKSOFT RELEASE DIRECTORY / {String(projects.length).padStart(2, '0')} ENTRIES</p>
+    <h1>projects</h1>
+    <p class="lede">
+      Software I build for work, security, and games. Each file includes its
+      current state, source, and field notes.
+    </p>
+    <a class="directory-link" href="https://github.com/tinkthemaker/" rel="me">
+      github.com/tinkthemaker&nbsp;&rarr;
+    </a>
+  </header>
 
-  {sorted.map((p) => (
-    <>
-      <h2>
-        <span class={cls[p.data.status]}>{label[p.data.status]}</span>{' '}
-        <a href={`/projects/${p.id}/`}>{p.data.title}</a>
-      </h2>
-      <p>
-        {p.data.description}
-        {p.data.repo && <> [<a href={p.data.repo}>source</a>]</>}
-        {p.data.link && <> [<a href={p.data.link}>visit</a>]</>}
-      </p>
-    </>
-  ))}
+  <section class="status-board" aria-labelledby="status-heading">
+    <div class="panel-title">
+      <h2 id="status-heading">[STATUS BOARD]</h2>
+      <span>SYNC: STATIC</span>
+    </div>
+    <div class="status-totals">
+      <div><strong class="status-wip">{String(counts.wip).padStart(2, '0')}</strong><span>ACTIVE</span></div>
+      <div><strong class="status-ship">{String(counts.shipped).padStart(2, '0')}</strong><span>SHIPPED</span></div>
+      <div><strong>{String(counts.idea).padStart(2, '0')}</strong><span>QUEUED</span></div>
+      <div><strong>{String(posts.length).padStart(2, '0')}</strong><span>FIELD NOTES</span></div>
+    </div>
+  </section>
 
-  {sorted.length === 0 && <p><em>No projects.</em></p>}
+  <section class="project-directory" aria-labelledby="directory-heading">
+    <div class="panel-title">
+      <h2 id="directory-heading">[RELEASE FILES]</h2>
+      <span>SORT: STATE / DATE</span>
+    </div>
+    <div class="project-grid">
+      {sorted.map((project, index) => {
+        const updates = relatedPosts(project.data.tag);
+        const updated = lastUpdate(project);
+        return (
+          <article class={`project-card state-${project.data.status}`}>
+            <header class="card-header">
+              <span class="file-number">{String(index + 1).padStart(2, '0')}</span>
+              <span class={`state status-${project.data.status === 'shipped' ? 'ship' : project.data.status}`}>
+                {statusCode[project.data.status]} / {statusName[project.data.status].toUpperCase()}
+              </span>
+            </header>
+            <div class="card-body">
+              <h3><a href={`/projects/${project.id}/`}>{project.data.title}</a></h3>
+              <p>{project.data.description}</p>
+            </div>
+            <dl class="card-meta">
+              <div><dt>state</dt><dd>{statusNote[project.data.status]}</dd></div>
+              {project.data.started && (
+                <div><dt>started</dt><dd><time datetime={fmt(project.data.started)}>{fmt(project.data.started)}</time></dd></div>
+              )}
+              <div><dt>updates</dt><dd>{String(updates.length).padStart(2, '0')}</dd></div>
+              {updated && (
+                <div><dt>last file</dt><dd><time datetime={fmt(updated)}>{fmt(updated)}</time></dd></div>
+              )}
+            </dl>
+            <footer class="card-actions">
+              <a class="primary-action" href={`/projects/${project.id}/`}>open file</a>
+              {project.data.repo && <a href={project.data.repo}>source</a>}
+              {project.data.link && <a href={project.data.link}>visit</a>}
+            </footer>
+          </article>
+        );
+      })}
+    </div>
+  </section>
+
+  {sorted.length === 0 && <p><em>No project files.</em></p>}
 </Base>
+
+<style>
+  .project-header { border-left: 3px solid var(--accent); padding: 0.2rem 0 0.35rem 1rem; margin-bottom: 2rem; }
+  .eyebrow, .panel-title, .directory-link, .state, .file-number, dt { letter-spacing: 0.06em; text-transform: uppercase; }
+  .eyebrow { color: var(--muted); font-size: 0.72rem; margin: 0 0 0.4rem; }
+  .project-header h1 { font-size: clamp(1.8rem, 7vw, 2.8rem); margin: 0; }
+  .lede { max-width: 37rem; margin: 0.7rem 0; }
+  .directory-link { font-size: 0.78rem; font-weight: bold; }
+  .status-board, .project-directory { border: 1px solid var(--rule); box-shadow: 3px 3px 0 var(--badge-bg); margin-top: 1.75rem; }
+  .panel-title { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--rule); background: var(--badge-bg); padding: 0.45rem 0.65rem; font-size: 0.72rem; }
+  .panel-title h2 { font-size: inherit; margin: 0; }
+  .panel-title > span { color: var(--muted); white-space: nowrap; }
+  .status-totals { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .status-totals > div { display: grid; gap: 0.1rem; padding: 0.8rem; border-right: 1px dotted var(--rule); }
+  .status-totals > div:last-child { border-right: 0; }
+  .status-totals strong { font-size: 1.35rem; line-height: 1; }
+  .status-totals span { color: var(--muted); font-size: 0.67rem; }
+  .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-card { display: flex; flex-direction: column; min-width: 0; border-bottom: 1px solid var(--rule); }
+  .project-card:nth-child(odd) { border-right: 1px solid var(--rule); }
+  .project-card:nth-last-child(-n + 2) { border-bottom: 0; }
+  .project-card:last-child:nth-child(odd) { grid-column: 1 / -1; border-right: 0; }
+  .card-header { display: flex; justify-content: space-between; gap: 0.5rem; padding: 0.45rem 0.7rem; border-bottom: 1px dotted var(--rule); font-size: 0.69rem; }
+  .file-number { color: var(--muted); }
+  .state { font-weight: bold; }
+  .status-idea { color: var(--muted); }
+  .card-body { padding: 0.8rem 0.8rem 0.4rem; }
+  .card-body h3 { font-size: 1.05rem; margin: 0 0 0.55rem; }
+  .card-body p { margin: 0; font-size: 0.88rem; }
+  .card-meta { margin: auto 0 0; padding: 0.75rem 0.8rem; font-size: 0.72rem; }
+  .card-meta > div { display: grid; grid-template-columns: 5.2rem 1fr; }
+  .card-meta dt { color: var(--muted); }
+  .card-meta dd { margin: 0; }
+  .card-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; border-top: 1px dotted var(--rule); padding: 0.6rem 0.8rem; font-size: 0.75rem; }
+  .card-actions a { display: inline-block; border: 1px solid var(--rule); padding: 0.08rem 0.42rem; text-decoration: none; }
+  .card-actions .primary-action { border-color: var(--accent); font-weight: bold; }
+  @media (max-width: 38rem) {
+    .status-totals { grid-template-columns: repeat(2, 1fr); }
+    .status-totals > div:nth-child(2) { border-right: 0; }
+    .status-totals > div:nth-child(-n + 2) { border-bottom: 1px dotted var(--rule); }
+    .project-grid { display: block; }
+    .project-card, .project-card:nth-child(odd), .project-card:nth-last-child(-n + 2) { border-right: 0; border-bottom: 1px solid var(--rule); }
+    .project-card:last-child { border-bottom: 0; }
+  }
+  @media (max-width: 24rem) {
+    .panel-title { align-items: flex-start; flex-direction: column; gap: 0.15rem; }
+    .card-meta > div { grid-template-columns: 4.8rem 1fr; }
+  }
+</style>

@@ -92,6 +92,8 @@ out.push(section('iNDEX'));
 out.push(framed());
 out.push(field('POSTS', 'tinksoft.com/'));
 out.push(field('PROJECTS', 'tinksoft.com/projects/'));
+out.push(field('ARCHiVE', 'tinksoft.com/archive/'));
+out.push(field('TAGS', 'tinksoft.com/tags/'));
 out.push(field('CURRENT', 'tinksoft.com/now/'));
 out.push(field('LiNKS', 'tinksoft.com/links/'));
 out.push(field('SOURCE', 'github.com/tinkthemaker/tinksoft'));

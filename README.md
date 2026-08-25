@@ -12,6 +12,7 @@ plain HTML out.
 - `Content-Security-Policy: default-src 'none'` (via meta tag — GitHub Pages doesn't support custom HTTP headers)
 - Full dark mode via `prefers-color-scheme` — no toggle, no JS, no flash
 - RSS feed, sitemap, robots.txt, humans.txt, and a proper [.nfo file](https://tinksoft.com/tinksoft.nfo)
+- Generated archive and tag indexes, plus section navigation on longer posts
 - A [colophon](https://tinksoft.com/colophon/) where the site measures itself on every build
 
 ## Writing a new post
@@ -50,7 +51,7 @@ The full story of the project in markdown.
 ```
 
 Tag posts with the project's `tag` and they'll automatically appear on the
-project's page under "related posts".
+project's page under "field notes" and in the site-wide tag index.
 
 ## Local development
 

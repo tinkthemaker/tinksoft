@@ -13,19 +13,44 @@ export async function getStaticPaths() {
 }
 
 const { post, newer, older } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
+const words = (post.body ?? '').split(/\s+/).filter(Boolean).length;
+const minutes = Math.max(1, Math.ceil(words / 220));
+const sections = headings.filter((heading) => heading.depth === 2);
 ---
 <Base title={`${post.data.title} — TinkSoft`} description={post.data.description}>
-  <h1>{post.data.title}</h1>
-  <p class="post-meta">
-    {fmt(post.data.date)}
-    {post.data.tags.length > 0 && <> &middot; {post.data.tags.map((t) => `#${t}`).join(' ')}</>}
-    &middot; <a href={`/log/${post.id}.txt`}>.txt</a>
-  </p>
-  <hr />
-  <div class="content">
-    <Content />
+  <header class="post-head scene-panel">
+    <p class="scene-label">[TRANSMISSION]</p>
+    <p class="eyebrow">FILE // {post.id}.txt</p>
+    <h1>{post.data.title}</h1>
+    {post.data.description && <p class="dek">{post.data.description}</p>}
+    <dl class="post-facts">
+      <div><dt>date</dt><dd><time datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time></dd></div>
+      <div><dt>read</dt><dd>{minutes} min / {words} words</dd></div>
+      <div><dt>format</dt><dd><a href={`/log/${post.id}.txt`}>plain text</a></dd></div>
+    </dl>
+    {post.data.tags.length > 0 && (
+      <nav class="tag-row" aria-label="post tags">
+        {post.data.tags.map((tag) => <a href={`/tags/${tag}/`}>#{tag}</a>)}
+      </nav>
+    )}
+  </header>
+
+  <div class:list={['post-layout', { 'has-sections': sections.length > 1 }]}>
+    {sections.length > 1 && (
+      <aside class="contents scene-panel" aria-labelledby="contents-title">
+        <p class="scene-label" id="contents-title">[IN THIS FILE]</p>
+        <ol>
+          {sections.map((heading) => (
+            <li><a href={`#${heading.slug}`}>{heading.text}</a></li>
+          ))}
+        </ol>
+      </aside>
+    )}
+    <article class="content prose">
+      <Content />
+    </article>
   </div>
 
   {(newer || older) && (
@@ -37,4 +62,33 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
       </nav>
     </>
   )}
+
+  <style>
+    .post-head { margin-bottom: 2.25rem; border-left: 4px solid var(--accent); }
+    .post-head h1 { max-width: 22ch; margin: 0.3rem 0 0.65rem; }
+    .dek { max-width: 58ch; margin: 0; color: var(--muted); font-size: 1.02rem; }
+    .post-facts { display: flex; flex-wrap: wrap; gap: 0.75rem 1.75rem; margin: 1.25rem 0 0; padding-top: 0.75rem; border-top: 1px dotted var(--rule); font-size: 0.76rem; }
+    .post-facts div { display: grid; grid-template-columns: auto auto; gap: 0.55rem; }
+    .post-facts dt { color: var(--muted); text-transform: uppercase; }
+    .post-facts dd { margin: 0; color: var(--ink); }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.9rem; }
+    .tag-row a { padding: 0.08rem 0.4rem; border: 1px solid var(--rule); background: var(--panel-2); font-size: 0.72rem; text-decoration: none; }
+    .post-layout { display: grid; gap: 2rem; }
+    .post-layout.has-sections { grid-template-columns: minmax(0, 1fr) 13rem; align-items: start; }
+    .prose { grid-column: 1; grid-row: 1; }
+    .contents { grid-column: 2; grid-row: 1; position: sticky; top: 1rem; padding: 1rem; box-shadow: 3px 3px 0 var(--shadow); font-size: 0.74rem; }
+    .contents ol { margin: 0; padding-left: 1.3rem; }
+    .contents li + li { margin-top: 0.45rem; }
+    .prose :global(h2) { scroll-margin-top: 1rem; }
+    .prose :global(p), .prose :global(li) { max-width: 70ch; }
+    @media (max-width: 52rem) {
+      .post-layout.has-sections { grid-template-columns: 1fr; }
+      .contents { grid-column: 1; grid-row: 1; position: static; }
+      .prose { grid-row: 2; }
+    }
+    @media (max-width: 32rem) {
+      .post-head { padding: 1rem; }
+      .post-facts { display: grid; gap: 0.35rem; }
+    }
+  </style>
 </Base>

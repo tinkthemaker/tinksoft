@@ -12,45 +12,149 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
-
-const label = { shipped: '[SHIPPED]', wip: '[WIP]', idea: '[IDEA]' };
-const cls = { shipped: 'status-ship', wip: 'status-wip', idea: 'status-idea' };
-
+const statusName = { shipped: 'shipped', wip: 'active', idea: 'queued' };
+const statusCode = { shipped: 'OK', wip: 'RUN', idea: 'WAIT' };
+const statusNote = { shipped: 'released and in use', wip: 'work in progress', idea: 'not started' };
 const related = project.data.tag
   ? (await getCollection('blog'))
-      .filter((p) => p.data.tags.includes(project.data.tag!))
+      .filter((post) => post.data.tags.includes(project.data.tag!))
       .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   : [];
-
-const fmt = (d: Date) => d.toISOString().slice(0, 10);
+const fmt = (date: Date) => date.toISOString().slice(0, 10);
+const latest = related[0]?.data.date ?? project.data.started;
+const sourceHost = project.data.repo ? new URL(project.data.repo).hostname : undefined;
+const visitHost = project.data.link ? new URL(project.data.link).hostname : undefined;
 ---
 <Base title={`${project.data.title} — TinkSoft`} description={project.data.description}>
-  <h1>
-    <span class={cls[project.data.status]}>{label[project.data.status]}</span>{' '}
-    {project.data.title}
-  </h1>
-  <p class="post-meta">
-    {project.data.started && <>started {fmt(project.data.started)}</>}
-    {project.data.repo && <> &middot; <a href={project.data.repo}>source</a></>}
-    {project.data.link && <> &middot; <a href={project.data.link}>visit</a></>}
-  </p>
-  <hr />
-  <div class="content">
-    <Content />
-  </div>
+  <article class="project-file">
+    <header class={`project-hero state-${project.data.status}`}>
+      <div class="hero-bar">
+        <span>PROJECT FILE / {project.id.toUpperCase()}</span>
+        <span class={`state status-${project.data.status === 'shipped' ? 'ship' : project.data.status}`}>
+          {statusCode[project.data.status]} / {statusName[project.data.status].toUpperCase()}
+        </span>
+      </div>
+      <div class="hero-copy">
+        <p class="kicker">TINKSOFT RELEASE ARCHIVE</p>
+        <h1>{project.data.title}</h1>
+        <p class="description">{project.data.description}</p>
+      </div>
 
-  {related.length > 0 && (
-    <>
-      <hr />
-      <h2>related posts</h2>
-      <table class="log">
-        {related.map((post) => (
-          <tr>
-            <td class="date">{fmt(post.data.date)}</td>
-            <td><a href={`/log/${post.id}/`}>{post.data.title}</a></td>
-          </tr>
-        ))}
-      </table>
-    </>
-  )}
+      <dl class="project-meta">
+        <div><dt>state</dt><dd>{statusNote[project.data.status]}</dd></div>
+        {project.data.started && (
+          <div><dt>started</dt><dd><time datetime={fmt(project.data.started)}>{fmt(project.data.started)}</time></dd></div>
+        )}
+        <div><dt>field notes</dt><dd>{String(related.length).padStart(2, '0')}</dd></div>
+        {latest && (
+          <div><dt>last update</dt><dd><time datetime={fmt(latest)}>{fmt(latest)}</time></dd></div>
+        )}
+      </dl>
+
+      {(project.data.repo || project.data.link) && (
+        <nav class="project-actions" aria-label={`${project.data.title} links`}>
+          {project.data.repo && (
+            <a class="primary-action" href={project.data.repo}>
+              <span>get source</span><small>{sourceHost}</small>
+            </a>
+          )}
+          {project.data.link && (
+            <a href={project.data.link}>
+              <span>visit project</span><small>{visitHost}</small>
+            </a>
+          )}
+        </nav>
+      )}
+    </header>
+
+    <section class="file-section" aria-labelledby="readme-heading">
+      <div class="section-bar">
+        <h2 id="readme-heading">[README]</h2>
+        <span>PLAIN TEXT / VERIFIED</span>
+      </div>
+      <div class="project-body content"><Content /></div>
+    </section>
+
+    <section class="file-section updates" aria-labelledby="updates-heading">
+      <div class="section-bar">
+        <h2 id="updates-heading">[FIELD NOTES]</h2>
+        <span>{String(related.length).padStart(2, '0')} ENTRIES / NEWEST FIRST</span>
+      </div>
+      {related.length > 0 ? (
+        <ol class="update-list">
+          {related.map((post, index) => (
+            <li>
+              <div class="update-index">{String(index + 1).padStart(2, '0')}</div>
+              <div class="update-copy">
+                <time datetime={fmt(post.data.date)}>{fmt(post.data.date)}</time>
+                <h3><a href={`/log/${post.id}/`}>{post.data.title}</a></h3>
+                {post.data.description && <p>{post.data.description}</p>}
+              </div>
+              <a class="read-note" href={`/log/${post.id}/`} aria-label={`Read ${post.data.title}`}>read&nbsp;&rarr;</a>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p class="empty-state">NO FIELD NOTES LOGGED.</p>
+      )}
+    </section>
+
+    <nav class="file-nav" aria-label="project navigation">
+      <a href="/projects/">&larr; all project files</a>
+      {project.data.repo && <a href={project.data.repo}>source archive &rarr;</a>}
+    </nav>
+  </article>
 </Base>
+
+<style>
+  .project-file { --panel-shadow: 3px 3px 0 var(--badge-bg); }
+  .project-hero, .file-section { border: 1px solid var(--rule); box-shadow: var(--panel-shadow); }
+  .hero-bar, .section-bar { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--rule); background: var(--badge-bg); padding: 0.45rem 0.65rem; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .state { font-weight: bold; white-space: nowrap; }
+  .status-idea { color: var(--muted); }
+  .hero-copy { border-left: 3px solid var(--accent); margin: 1.15rem; padding: 0.1rem 0 0.1rem 1rem; }
+  .kicker { color: var(--muted); font-size: 0.7rem; letter-spacing: 0.08em; margin: 0 0 0.4rem; }
+  .hero-copy h1 { font-size: clamp(1.8rem, 7vw, 2.7rem); margin: 0; }
+  .description { max-width: 38rem; margin: 0.65rem 0 0; }
+  .project-meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; border-top: 1px dotted var(--rule); }
+  .project-meta > div { display: grid; grid-template-columns: 6.8rem 1fr; gap: 0.5rem; padding: 0.55rem 0.75rem; border-bottom: 1px dotted var(--rule); }
+  .project-meta > div:nth-child(odd) { border-right: 1px dotted var(--rule); }
+  .project-meta dt { color: var(--muted); font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; }
+  .project-meta dd { margin: 0; font-size: 0.8rem; }
+  .project-actions { display: flex; gap: 0.65rem; padding: 0.85rem; }
+  .project-actions a { display: flex; flex: 1; justify-content: space-between; align-items: center; gap: 0.75rem; min-width: 0; border: 1px solid var(--rule); padding: 0.45rem 0.6rem; text-decoration: none; }
+  .project-actions .primary-action { border-color: var(--accent); font-weight: bold; }
+  .project-actions small { color: var(--muted); font-size: 0.65rem; overflow: hidden; text-overflow: ellipsis; }
+  .project-actions a:hover small { color: inherit; }
+  .file-section { margin-top: 1.75rem; }
+  .section-bar h2 { font-size: inherit; margin: 0; }
+  .section-bar span { color: var(--muted); white-space: nowrap; }
+  .project-body { padding: 0.45rem 1.1rem 1rem; }
+  .project-body :global(h2) { border-bottom: 1px dotted var(--rule); padding-bottom: 0.35rem; font-size: 1rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  .project-body :global(h2)::before { content: '> '; color: var(--accent); }
+  .project-body :global(ul) { padding-left: 1.35rem; }
+  .project-body :global(li)::marker { color: var(--accent); }
+  .update-list { margin: 0; padding: 0; list-style: none; }
+  .update-list li { display: grid; grid-template-columns: 2.2rem minmax(0, 1fr) auto; gap: 0.75rem; align-items: start; padding: 0.9rem; }
+  .update-list li + li { border-top: 1px dotted var(--rule); }
+  .update-index, .update-copy time { color: var(--muted); font-size: 0.7rem; }
+  .update-copy h3 { font-size: 0.95rem; margin: 0.12rem 0 0; }
+  .update-copy p { margin: 0.3rem 0 0; font-size: 0.8rem; }
+  .read-note { align-self: center; font-size: 0.72rem; white-space: nowrap; }
+  .empty-state { color: var(--muted); font-size: 0.75rem; margin: 0; padding: 1rem; }
+  .file-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.75rem; font-size: 0.8rem; }
+  @media (max-width: 38rem) {
+    .project-meta { display: block; }
+    .project-meta > div:nth-child(odd) { border-right: 0; }
+    .project-actions { display: grid; }
+    .update-list li { grid-template-columns: 1.8rem minmax(0, 1fr); }
+    .read-note { grid-column: 2; }
+  }
+  @media (max-width: 24rem) {
+    .hero-bar, .section-bar { align-items: flex-start; flex-direction: column; gap: 0.15rem; }
+    .hero-copy { margin: 0.9rem; }
+    .project-meta > div { grid-template-columns: 5.8rem 1fr; }
+    .project-actions a { align-items: flex-start; flex-direction: column; gap: 0.1rem; }
+    .file-nav { flex-direction: column; gap: 0.4rem; }
+  }
+</style>

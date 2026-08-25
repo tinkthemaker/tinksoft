@@ -15,46 +15,63 @@ const oldest = posts.reduce(
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
 ---
 <Base title="colophon — TinkSoft" description="Build details and current output size.">
-  <h1>colophon</h1>
-  <p>
-    Build details. The numbers below are generated during each production
-    build.
-  </p>
+  <header class="colo-head scene-panel">
+    <p class="scene-label">[BUILD REPORT]</p>
+    <p class="eyebrow">TARGET // GITHUB PAGES</p>
+    <h1>colophon</h1>
+    <p>The numbers below are generated during each production build.</p>
+  </header>
 
-  <h2>the numbers</h2>
-  <table class="log">
-    <tr><td class="date">pages</td><td>@PAGES@ HTML pages</td></tr>
-    <tr><td class="date">total weight</td><td>@RAW_KB@ KB raw &middot; @GZ_KB@ KB gzipped (entire site)</td></tr>
-    <tr><td class="date">avg page</td><td>@AVG_GZ@ KB gzipped</td></tr>
-    <tr><td class="date">heaviest page</td><td><a href="@HEAVIEST@">@HEAVIEST@</a> at @HEAVIEST_GZ@ KB gzipped</td></tr>
-    <tr><td class="date">javascript</td><td>0 bytes shipped, ever</td></tr>
-    <tr><td class="date">requests</td><td>2 per page (document + counter.svg; CSS and favicon inlined)</td></tr>
-    <tr><td class="date">log entries</td><td>{posts.length} posts, {words.toLocaleString()} words since {fmt(oldest)}</td></tr>
-    <tr><td class="date">projects</td><td>{projects.length}</td></tr>
-    <tr><td class="date">built</td><td>@BUILT_AT@ in @BUILD_S@s</td></tr>
-  </table>
+  <section class="metrics scene-panel">
+    <p class="scene-label">[OUTPUT METRICS]</p>
+    <table class="log">
+      <tr><td class="date">pages</td><td>@PAGES@ HTML pages</td></tr>
+      <tr><td class="date">total weight</td><td>@RAW_KB@ KB raw &middot; @GZ_KB@ KB gzipped (entire site)</td></tr>
+      <tr><td class="date">avg page</td><td>@AVG_GZ@ KB gzipped</td></tr>
+      <tr><td class="date">heaviest page</td><td><a href="@HEAVIEST@">@HEAVIEST@</a> at @HEAVIEST_GZ@ KB gzipped</td></tr>
+      <tr><td class="date">javascript</td><td>0 bytes shipped</td></tr>
+      <tr><td class="date">requests</td><td>2 per page (document + counter.svg; CSS and favicon inlined)</td></tr>
+      <tr><td class="date">log entries</td><td>{posts.length} posts, {words.toLocaleString()} words since {fmt(oldest)}</td></tr>
+      <tr><td class="date">projects</td><td>{projects.length}</td></tr>
+      <tr><td class="date">built</td><td>@BUILT_AT@ in @BUILD_S@s</td></tr>
+    </table>
+  </section>
 
-  <h2>the counter</h2>
-  <p>
-    The counter is a static SVG. It always reads 0001337 and does not record
-    visits.
-  </p>
+  <div class="colo-grid">
+    <section class="scene-panel">
+      <p class="scene-label">[COUNTER]</p>
+      <p>The counter is a static SVG. It always reads 0001337 and records nothing.</p>
+    </section>
 
-  <h2>the manifest</h2>
-  <p>
-    Every deploy includes SHA-256 checksums at
-    <a href="/checksums.txt">/checksums.txt</a>.
-  </p>
+    <section class="scene-panel">
+      <p class="scene-label">[MANIFEST]</p>
+      <p>Every deploy includes SHA-256 checksums at <a href="/checksums.txt">/checksums.txt</a>.</p>
+    </section>
+  </div>
 
-  <h2>the stack</h2>
-  <p>
-    Posts are markdown files. <a href="https://astro.build">Astro</a> builds
-    them into static HTML. CSS is inlined. The site uses the system monospace
-    font and ships no client-side JavaScript. GitHub Pages hosts the output.
-  </p>
-  <p>
-    A <code>&lt;meta&gt;</code> tag sets <code>Content-Security-Policy:
-    default-src 'none'</code>. Inline styles, local images, and data-URI images
-    are allowed. Everything else is blocked.
-  </p>
+  <section class="stack scene-panel">
+    <p class="scene-label">[STACK]</p>
+    <p>
+      Posts are markdown files. <a href="https://astro.build">Astro</a> builds
+      them into static HTML. CSS is inlined. The site uses the system monospace
+      font and ships no client-side JavaScript. GitHub Pages hosts the output.
+    </p>
+    <p>
+      A <code>&lt;meta&gt;</code> tag sets <code>Content-Security-Policy:
+      default-src 'none'</code>. Inline styles, local images, and data-URI images
+      are allowed. Everything else is blocked.
+    </p>
+  </section>
+
+  <style>
+    .colo-head { margin-bottom: 2rem; border-left: 4px solid var(--accent); }
+    .colo-head h1 { margin: 0.25rem 0; }
+    .colo-head > p:last-child { margin: 0; color: var(--muted); }
+    .metrics { margin-bottom: 1.25rem; }
+    .metrics table tr:last-child { border-bottom: 0; }
+    .colo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem; }
+    .colo-grid p, .stack p:last-child { margin-bottom: 0; }
+    .stack { border-left: 4px solid var(--accent-2); }
+    @media (max-width: 42rem) { .colo-grid { grid-template-columns: 1fr; } }
+  </style>
 </Base>
