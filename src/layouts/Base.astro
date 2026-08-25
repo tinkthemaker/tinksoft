@@ -17,6 +17,19 @@ const isHere = (section: string[]) =>
     s === '/' ? path === '/' : path === s || path.startsWith(`${s}/`)
   );
 
+const pageLabel = title
+  .replace(/ — TinkSoft$/, '')
+  .replace(/^TinkSoft — /, '');
+const thread = [{ href: '/', label: 'posts' }];
+
+if (path.startsWith('/projects/') && path !== '/projects/') {
+  thread.push({ href: '/projects/', label: 'projects' });
+}
+
+if (path !== '/') {
+  thread.push({ href: path, label: pageLabel });
+}
+
 const footerLinks = [
   { href: '/rss.xml', label: 'rss' },
   { href: '/links/', label: 'links' },
@@ -135,6 +148,27 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
       text-decoration: none;
       font-weight: bold;
     }
+    nav.thread {
+      margin: -0.75rem 0 1.5rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+    nav.thread ol {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    nav.thread li:not(:last-child)::after {
+      content: ' /';
+      color: var(--rule);
+    }
+    nav.thread [aria-current='page'] {
+      color: var(--ink);
+      font-weight: bold;
+    }
     .tagline { color: var(--muted); margin: 0.5rem 0 0; font-size: 0.9rem; }
     table.log { border-collapse: collapse; width: 100%; }
     table.log td { padding: 0.3rem 0.75rem 0.3rem 0; vertical-align: top; }
@@ -209,12 +243,25 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
     <hr />
   </header>
 
+  <nav class="thread" aria-label="page trail">
+    <ol>
+      {thread.map((item, index) => (
+        <li>
+          {index === thread.length - 1
+            ? <span aria-current="page">{item.label}</span>
+            : <a href={item.href}>{item.label}</a>}
+        </li>
+      ))}
+    </ol>
+  </nav>
+
   <main id="main">
     <slot />
   </main>
 
   <footer>
     <hr />
+    {path !== '/' && <p class="return"><a href="/">&laquo; return to posts</a></p>}
     <p>
       <span class="badge">PERSONAL SITE</span><span class="badge">PLAIN HTML</span><span class="badge">0 KB JS</span><span class="badge">NO TRACKING</span><span class="badge">EST. 2026</span>
     </p>

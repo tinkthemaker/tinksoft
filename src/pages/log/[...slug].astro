@@ -17,7 +17,6 @@ const { Content } = await render(post);
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
 ---
 <Base title={`${post.data.title} — TinkSoft`} description={post.data.description}>
-  <p><a href="/">&laquo; back to posts</a></p>
   <h1>{post.data.title}</h1>
   <p class="post-meta">
     {fmt(post.data.date)}

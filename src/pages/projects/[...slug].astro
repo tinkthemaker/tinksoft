@@ -25,7 +25,6 @@ const related = project.data.tag
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
 ---
 <Base title={`${project.data.title} — TinkSoft`} description={project.data.description}>
-  <p><a href="/projects/">&laquo; back to projects</a></p>
   <h1>
     <span class={cls[project.data.status]}>{label[project.data.status]}</span>{' '}
     {project.data.title}
