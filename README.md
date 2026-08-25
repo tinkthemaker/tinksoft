@@ -5,9 +5,9 @@ A 90s-style build log for working in public. Built with [Astro](https://astro.bu
 ## The numbers
 
 - **0 KB JavaScript** shipped to the browser
-- **1 HTTP request** per page — CSS and favicon are inlined into the HTML
-- **~2.5 KB gzipped** per page, ~18 KB gzipped for the entire site
-- Strict `Content-Security-Policy: default-src 'none'`
+- **2 HTTP requests** per page — the document and decorative counter; CSS and favicon are inlined
+- Build-time page-count and size measurements on the [colophon](https://tinksoft.com/colophon/)
+- `Content-Security-Policy: default-src 'none'` (via meta tag — GitHub Pages doesn't support custom HTTP headers)
 - Full dark mode via `prefers-color-scheme` — no toggle, no JS, no flash
 - RSS feed, sitemap, robots.txt, humans.txt, and a proper [.nfo file](https://tinksoft.com/tinksoft.nfo)
 - A [colophon](https://tinksoft.com/colophon/) where the site measures itself on every build
@@ -64,14 +64,16 @@ npm run build    # production build to dist/ (also computes colophon stats)
 
 ## Deploying
 
-Connected to Vercel via GitHub. Publishing is:
+Hosted on GitHub Pages. A GitHub Actions workflow builds and deploys on every
+push to `main`. Publishing is:
 
 ```bash
 git add . && git commit -m "log: new post" && git push
 ```
 
-Domain setup (one-time): Vercel project → Settings → Domains → add
-`tinksoft.com`, then set the DNS records Vercel shows at your registrar.
+Setup (one-time): GitHub repo → Settings → Pages → Build and deployment →
+Source → select **GitHub Actions**. Then add `tinksoft.com` as the custom domain
+and set the DNS records GitHub shows at your registrar.
 
 ## Map
 
@@ -81,5 +83,5 @@ Domain setup (one-time): Vercel project → Settings → Domains → add
 - `src/pages/` — page templates, colophon, and the RSS route
 - `scripts/` — build stamp + colophon stats injection (runs in `npm run build`)
 - `public/` — tinksoft.nfo, humans.txt, robots.txt, badge.svg (88×31 button)
-- `vercel.json` — security + cache headers
+- `.github/workflows/pages.yml` — GitHub Pages build and deploy workflow
 - The visitor counter is decorative. Increment it when you've earned it.
