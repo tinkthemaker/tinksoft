@@ -5,6 +5,26 @@ interface Props {
 }
 const { title, description = 'TinkSoft — build logs, bugs, and small victories. Building software in public since 2026.' } = Astro.props;
 const path = Astro.url.pathname;
+
+const nav = [
+  { href: '/', label: 'build log', section: ['/', '/log'] },
+  { href: '/projects/', label: 'projects', section: ['/projects'] },
+  { href: '/now/', label: 'now', section: ['/now'] },
+  { href: '/about/', label: 'about', section: ['/about'] },
+];
+const isHere = (section: string[]) =>
+  section.some((s) =>
+    s === '/' ? path === '/' : path === s || path.startsWith(`${s}/`)
+  );
+
+const footerLinks = [
+  { href: '/rss.xml', label: 'rss' },
+  { href: '/links/', label: 'links' },
+  { href: '/colophon/', label: 'colophon' },
+  { href: '/tinksoft.nfo', label: '.nfo' },
+  { href: '/humans.txt', label: 'humans.txt' },
+  { href: 'https://github.com/tinkthemaker/', label: 'github', me: true },
+];
 const canonical = new URL(path, Astro.site);
 const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cstyle%3Erect%7Bfill:%23f4f0e4%7Dtext%7Bfill:%23008080%7D@media(prefers-color-scheme:dark)%7Brect%7Bfill:%23161613%7Dtext%7Bfill:%233fbdb0%7D%7D%3C/style%3E%3Crect width='32' height='32'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='bold' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E";
 ---
@@ -26,7 +46,7 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
   <meta property="og:description" content={description} />
   <meta property="og:type" content="website" />
   <meta property="og:url" content={canonical} />
-  <style>
+  <style is:global>
     :root {
       --bg: #f4f0e4;
       --ink: #1a1a1a;
@@ -70,10 +90,23 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
       font-size: 16px;
       line-height: 1.55;
       color: var(--ink);
+      overflow-wrap: break-word;
     }
     a { color: var(--link); }
     a:visited { color: var(--visited); }
     a:hover { background: var(--ink); color: var(--bg); }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .skip {
+      position: absolute;
+      left: -9999px;
+    }
+    .skip:focus {
+      left: 0.5rem;
+      top: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      background: var(--bg);
+      border: 1px solid var(--rule);
+    }
     h1, h2, h3 { font-family: inherit; line-height: 1.2; }
     h1 { font-size: 1.5rem; }
     h2 { font-size: 1.2rem; margin-top: 2rem; }
@@ -94,18 +127,25 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
       margin-top: 0.75rem;
       letter-spacing: 0.02em;
     }
-    nav.site a { margin-right: 0.25rem; }
-    nav.site a.here {
+    a.logo { display: inline-block; }
+    a.logo:hover { background: none; color: inherit; }
+    .navitem { display: inline-block; margin-right: 0.5rem; white-space: nowrap; }
+    nav.site a[aria-current='page'] {
       color: var(--ink);
       text-decoration: none;
       font-weight: bold;
-      pointer-events: none;
     }
     .tagline { color: var(--muted); margin: 0.5rem 0 0; font-size: 0.9rem; }
     table.log { border-collapse: collapse; width: 100%; }
     table.log td { padding: 0.3rem 0.75rem 0.3rem 0; vertical-align: top; }
     td.date { white-space: nowrap; color: var(--muted); font-size: 0.9rem; }
+    @media (max-width: 30rem) {
+      table.log, table.log tbody, table.log tr, table.log td { display: block; }
+      table.log td { padding: 0; }
+      table.log tr + tr { margin-top: 0.9rem; }
+    }
     .post-meta { color: var(--muted); font-size: 0.9rem; }
+    nav.post-nav p { margin: 0.3rem 0; }
     .content :is(pre) {
       background: var(--code-bg);
       color: var(--code-ink);
@@ -124,7 +164,7 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
       padding-left: 1rem;
       color: var(--quote-ink);
     }
-    .content img { max-width: 100%; border: 1px solid var(--rule); }
+    .content img { max-width: 100%; height: auto; border: 1px solid var(--rule); }
     footer {
       margin-top: 3rem;
       font-size: 0.8rem;
@@ -136,7 +176,7 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
       background: var(--badge-bg);
       padding: 0 0.4rem;
       font-size: 0.75rem;
-      margin-right: 0.4rem;
+      margin: 0 0.4rem 0.3rem 0;
     }
     img.counter {
       vertical-align: middle;
@@ -148,25 +188,28 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
   </style>
 </head>
 <body>
+  <a class="skip" href="#main">skip to content</a>
   <header>
-    <a href="/" style="text-decoration:none"><pre class="ascii">
+    <a class="logo" href="/" aria-label="TinkSoft home" style="text-decoration:none"><pre class="ascii" aria-hidden="true">
  _____ ___ _   _ _  ______   ___  _____ _____
 |_   _|_ _| \ | | |/ / ___| / _ \|  ___|_   _|
   | |  | ||  \| | ' /\___ \| | | | |_    | |
   | |  | || |\  | . \ ___) | |_| |  _|   | |
   |_| |___|_| \_|_|\_\____/ \___/|_|     |_|</pre></a>
     <p class="tagline">// building software in public. logs, bugs, small victories. est. 2026</p>
-    <nav class="site">
-      [<a href="/" class={path === '/' ? 'here' : ''}>build log</a>]
-      [<a href="/projects/" class={path.startsWith('/projects') ? 'here' : ''}>projects</a>]
-      [<a href="/now/" class={path.startsWith('/now') ? 'here' : ''}>now</a>]
-      [<a href="/about/" class={path.startsWith('/about') ? 'here' : ''}>about</a>]
-      [<a href="https://github.com/tinkthemaker/" rel="me">github</a>]
+    <nav class="site" aria-label="site">
+      {nav.map((item) => (
+        <span class="navitem">[<a
+          href={item.href}
+          aria-current={isHere(item.section) ? 'page' : undefined}
+        >{item.label}</a>]</span>
+      ))}
+      <span class="navitem">[<a href="https://github.com/tinkthemaker/" rel="me">github</a>]</span>
     </nav>
     <hr />
   </header>
 
-  <main>
+  <main id="main">
     <slot />
   </main>
 
@@ -175,15 +218,12 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
     <p>
       <span class="badge">EST. 2026</span><span class="badge">100% HTML</span><span class="badge">0 KB JS</span><span class="badge">1 REQUEST + COUNTER</span><span class="badge">best viewed in any browser</span>
     </p>
-    <p>
-      [<a href="/rss.xml">rss</a>]
-      [<a href="/links/">links</a>]
-      [<a href="/colophon/">colophon</a>]
-      [<a href="/tinksoft.nfo">.nfo</a>]
-      [<a href="/humans.txt">humans.txt</a>]
-      [<a href="https://github.com/tinkthemaker/" rel="me">github</a>]
-    </p>
-    <p>you are visitor No. <img class="counter" src="/counter.svg" alt="visitor counter" height="20" /> &middot; &copy; {new Date().getFullYear()} tinksoft.com &middot; made by tink</p>
+    <nav aria-label="more">
+      {footerLinks.map((item) => (
+        <span class="navitem">[<a href={item.href} rel={item.me ? 'me' : undefined}>{item.label}</a>]</span>
+      ))}
+    </nav>
+    <p>you are visitor No. <img class="counter" src="/counter.svg" alt="visitor counter, frozen at 0001337" width="66" height="20" /> &middot; &copy; {new Date().getFullYear()} tinksoft.com &middot; made by tink</p>
   </footer>
 </body>
 </html>

@@ -4,8 +4,11 @@ import { getCollection } from 'astro:content';
 
 const projects = await getCollection('projects');
 const order = { wip: 0, shipped: 1, idea: 2 };
-const sorted = projects.sort(
-  (a, b) => order[a.data.status] - order[b.data.status]
+const started = (p: (typeof projects)[number]) =>
+  p.data.started ? p.data.started.valueOf() : 0;
+const sorted = [...projects].sort(
+  (a, b) =>
+    order[a.data.status] - order[b.data.status] || started(b) - started(a)
 );
 const label = { shipped: '[SHIPPED]', wip: '[WIP]', idea: '[IDEA]' };
 const cls = { shipped: 'status-ship', wip: 'status-wip', idea: 'status-idea' };

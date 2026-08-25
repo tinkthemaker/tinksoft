@@ -64,8 +64,8 @@ npm run build    # production build to dist/ (also computes colophon stats)
 
 ## Deploying
 
-Hosted on GitHub Pages. A GitHub Actions workflow builds and deploys on every
-push to `main`. Publishing is:
+GitHub Actions builds and publishes to GitHub Pages on every push to `main`
+(`.github/workflows/pages.yml`). Publishing is:
 
 ```bash
 git add . && git commit -m "log: new post" && git push
@@ -73,7 +73,8 @@ git add . && git commit -m "log: new post" && git push
 
 Setup (one-time): GitHub repo → Settings → Pages → Build and deployment →
 Source → select **GitHub Actions**. Then add `tinksoft.com` as the custom domain
-and set the DNS records GitHub shows at your registrar.
+and set the DNS records GitHub shows at your registrar. The workflow copies
+the repository's `CNAME` file into `dist/` for each deployment.
 
 ## Map
 
@@ -83,5 +84,5 @@ and set the DNS records GitHub shows at your registrar.
 - `src/pages/` — page templates, colophon, and the RSS route
 - `scripts/` — build stamp + colophon stats injection (runs in `npm run build`)
 - `public/` — tinksoft.nfo, humans.txt, robots.txt, badge.svg (88×31 button)
-- `.github/workflows/pages.yml` — GitHub Pages build and deploy workflow
+- `.github/workflows/pages.yml` — build + deploy to GitHub Pages
 - The visitor counter is decorative. Increment it when you've earned it.

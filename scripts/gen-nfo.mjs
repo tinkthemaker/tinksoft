@@ -119,6 +119,8 @@ const footer = [
   '',
 ];
 
-const out = logo.join('\n') + '\n' + divider + '\n' + sections.join('\n') + '\n' + footer.join('\n');
+// GitHub Pages serves .nfo files without a charset; the UTF-8 signature keeps
+// browsers from decoding the box-drawing characters as Windows-1252.
+const out = '\uFEFF' + logo.join('\n') + '\n' + divider + '\n' + sections.join('\n') + '\n' + footer.join('\n');
 writeFileSync('public/tinksoft.nfo', out);
 console.log(`wrote ${out.split('\n').length} lines`);
