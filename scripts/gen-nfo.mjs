@@ -31,7 +31,7 @@ const logo = [
   '  ██████████████████████████████████████████████████████████████',
 ];
 
-const divider = '  ░' + '░'.repeat(W - 4) + '░  ';
+const divider = '  ░' + '░'.repeat(W - 4) + '░';
 
 const sections = [];
 
@@ -43,7 +43,7 @@ sections.push(line('  TYPE..........: website / build log'));
 sections.push(line('  SUPPLiER......: tink'));
 sections.push(line('  RELEASE DATE..: 06-09-2026'));
 sections.push(line('  PLATFORM......: any browser since ~1996'));
-sections.push(line('  SiZE..........: ~2.5 KB gzipped per page'));
+sections.push(line('  SiZE..........: measured at /colophon/'));
 sections.push(line('  JAVASCRiPT....: 0 bytes — none, never'));
 sections.push(line('  PROTECTiON....: CSP default-src none'));
 sections.push(line('  FORMAT........: static HTML, CSS inlined'));
@@ -61,7 +61,7 @@ sections.push(empty());
 sections.push(line("  the constraint is the point: plain HTML, CSS"));
 sections.push(line("  inlined, favicon inlined, strict CSP, no"));
 sections.push(line("  trackers, no frameworks shipped to your"));
-sections.push(line("  browser. one HTTP request per page."));
+sections.push(line("  browser. one document request, plus the counter."));
 sections.push(empty());
 sections.push(line("  do a lot with a little. the demoscene fit"));
 sections.push(line("  whole worlds into 64 KB. a page that fits in"));
