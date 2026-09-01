@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 ---
-<Base title="releases - TinkSoft" description="Scene-style release archives for tinksoft.com.">
+<Base title={'releases \u2014 TinkSoft'} description="Scene-style release archives for tinksoft.com.">
   <header class="release-head scene-panel">
     <p class="scene-label">[SCENE RELEASE]</p>
     <p class="eyebrow">ARCHIVE // DISTRIBUTION</p>
@@ -26,8 +26,8 @@ import Base from '../layouts/Base.astro';
       The archive contains the plain-text log files, the site NFO, and checksums
       for every entry except the checksum manifest itself.
     </p>
-    <pre>sha256sum tinksoft-YYYYMMDD.zip
-unzip -l tinksoft-YYYYMMDD.zip</pre>
+    <pre>sha256sum @REL_NAME@
+unzip -l @REL_NAME@</pre>
   </section>
 
   <style>
@@ -39,6 +39,16 @@ unzip -l tinksoft-YYYYMMDD.zip</pre>
     .hash { overflow-wrap: anywhere; font-size: 0.82rem; }
     .release-notes { border-left: 4px solid var(--hot); }
     .release-notes p:not(.scene-label) { max-width: 68ch; }
-    .release-notes pre { margin-bottom: 0; }
+    .release-notes pre {
+      margin-bottom: 0;
+      padding: 1rem;
+      overflow-x: auto;
+      color: var(--code-ink);
+      background: var(--code-bg);
+      border: 1px solid var(--frame);
+      box-shadow: 3px 3px 0 var(--shadow);
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
   </style>
 </Base>

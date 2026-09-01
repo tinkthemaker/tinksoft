@@ -10,7 +10,7 @@ const width = Math.max(3, ...pages.map((page) => page.url.length));
 const rows = pages.map((page) => {
   const percent = (page.gz / BUDGET) * 100;
   const marker = percent > 100 ? 'OVER' : '';
-  return `${page.url.padEnd(width)}  ${String(page.gz).padStart(8)}  ${kb(page.gz).padStart(5)} KB  ${`${percent.toFixed(1)}%`.padStart(6)}  ${marker}`;
+  return `${page.url.padEnd(width)}  ${String(page.gz).padStart(8)}  ${kb(page.gz).padStart(5)} KB  ${`${percent.toFixed(1)}%`.padStart(7)}  ${marker}`;
 });
 
 const report = [
@@ -19,7 +19,7 @@ const report = [
   `budget ${BUDGET} bytes (${kb(BUDGET)} KB)`,
   'rationale: 14 KB fits one TCP slow-start window.',
   '',
-  `${'URL'.padEnd(width)}  ${'GZ BYTES'.padStart(8)}  ${'KB'.padStart(5)}   ${'PERCENT'.padStart(7)}  STATUS`,
+  `${'URL'.padEnd(width)}  ${'GZ BYTES'.padStart(8)}  ${'KB'.padStart(8)}  ${'PERCENT'.padStart(7)}  STATUS`,
   ...rows,
   '',
 ].join('\n');
