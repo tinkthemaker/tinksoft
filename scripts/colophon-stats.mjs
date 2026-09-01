@@ -1,35 +1,20 @@
-import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { gzipSync } from 'node:zlib';
+import { BUDGET, measure } from './lib/measure.mjs';
 
 const DIST = 'dist';
-
-function htmlFiles(dir) {
-  const out = [];
-  for (const name of readdirSync(dir)) {
-    const p = join(dir, name);
-    if (statSync(p).isDirectory()) out.push(...htmlFiles(p));
-    else if (name.endsWith('.html')) out.push(p);
-  }
-  return out;
-}
-
-const files = htmlFiles(DIST);
+const files = measure(DIST);
 let rawTotal = 0;
 let gzTotal = 0;
-let heaviest = { path: '', gz: 0 };
+let heaviest = { url: '', gz: 0 };
 
-for (const f of files) {
-  const buf = readFileSync(f);
-  const gz = gzipSync(buf, { level: 9 }).length;
-  rawTotal += buf.length;
-  gzTotal += gz;
-  if (gz > heaviest.gz) heaviest = { path: f, gz };
+for (const file of files) {
+  rawTotal += file.raw;
+  gzTotal += file.gz;
+  if (file.gz > heaviest.gz) heaviest = file;
 }
 
 const kb = (n) => (n / 1024).toFixed(1);
-const heaviestUrl =
-  '/' + heaviest.path.replace(/^dist[\\/]/, '').replace(/index\.html$/, '').replace(/\\/g, '/');
 
 let duration = '?';
 if (existsSync('.build-start')) {
@@ -44,8 +29,10 @@ html = html
   .replaceAll('@RAW_KB@', kb(rawTotal))
   .replaceAll('@GZ_KB@', kb(gzTotal))
   .replaceAll('@AVG_GZ@', kb(gzTotal / files.length))
-  .replaceAll('@HEAVIEST@', heaviestUrl)
+  .replaceAll('@HEAVIEST@', heaviest.url)
   .replaceAll('@HEAVIEST_GZ@', kb(heaviest.gz))
+  .replaceAll('@BUDGET_KB@', kb(BUDGET))
+  .replaceAll('@WORST_PCT@', ((heaviest.gz / BUDGET) * 100).toFixed(1))
   .replaceAll('@BUILD_S@', duration)
   .replaceAll('@BUILT_AT@', builtAt);
 writeFileSync(colophon, html);

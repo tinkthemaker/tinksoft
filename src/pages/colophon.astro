@@ -28,7 +28,8 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
       <tr><td class="date">pages</td><td>@PAGES@ HTML pages</td></tr>
       <tr><td class="date">total weight</td><td>@RAW_KB@ KB raw &middot; @GZ_KB@ KB gzipped (entire site)</td></tr>
       <tr><td class="date">avg page</td><td>@AVG_GZ@ KB gzipped</td></tr>
-      <tr><td class="date">heaviest page</td><td><a href="@HEAVIEST@">@HEAVIEST@</a> at @HEAVIEST_GZ@ KB gzipped</td></tr>
+      <tr><td class="date">budget</td><td>@BUDGET_KB@ KB gzipped per page &mdash; the build fails if any page exceeds it</td></tr>
+      <tr><td class="date">worst page</td><td><a href="@HEAVIEST@">@HEAVIEST@</a> at @HEAVIEST_GZ@ KB gzipped &middot; @WORST_PCT@% of budget used by the heaviest page</td></tr>
       <tr><td class="date">javascript</td><td>0 bytes shipped</td></tr>
       <tr><td class="date">requests</td><td>2 per page (document + counter.svg; CSS and favicon inlined)</td></tr>
       <tr><td class="date">log entries</td><td>{posts.length} posts, {words.toLocaleString()} words since {fmt(oldest)}</td></tr>
@@ -45,7 +46,7 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
 
     <section class="scene-panel">
       <p class="scene-label">[MANIFEST]</p>
-      <p>Every deploy includes SHA-256 checksums at <a href="/checksums.txt">/checksums.txt</a>.</p>
+      <p>Every deploy includes SHA-256 checksums at <a href="/checksums.txt">/checksums.txt</a> and a page size report at <a href="/size-report.txt">/size-report.txt</a>.</p>
     </section>
   </div>
 
