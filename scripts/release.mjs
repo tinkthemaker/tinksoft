@@ -3,7 +3,9 @@ import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { deflateRawSync } from 'node:zlib';
 
 const DIST = 'dist';
-const releaseDate = new Date();
+const releaseDate = process.env.SOURCE_DATE_EPOCH
+  ? new Date(Number(process.env.SOURCE_DATE_EPOCH) * 1000)
+  : new Date();
 const date = releaseDate.toISOString().slice(0, 10).replaceAll('-', '');
 const releaseName = `tinksoft-${date}.zip`;
 const releaseDir = `${DIST}/releases`;
@@ -62,9 +64,11 @@ for (const entry of entries) {
   const name = Buffer.from(entry.name, 'utf8');
   const compressed = deflateRawSync(entry.data, { level: 9 });
   const crc = crc32(entry.data);
+  const flag = name.some((byte) => byte >= 0x80) ? 0x0800 : 0;
   const local = Buffer.alloc(30 + name.length);
   local.writeUInt32LE(0x04034b50, 0);
   local.writeUInt16LE(20, 4);
+  local.writeUInt16LE(flag, 6);
   local.writeUInt16LE(8, 8);
   local.writeUInt16LE(dosTime, 10);
   local.writeUInt16LE(dosDate, 12);
@@ -79,6 +83,7 @@ for (const entry of entries) {
   central.writeUInt32LE(0x02014b50, 0);
   central.writeUInt16LE(20, 4);
   central.writeUInt16LE(20, 6);
+  central.writeUInt16LE(flag, 8);
   central.writeUInt16LE(8, 10);
   central.writeUInt16LE(dosTime, 12);
   central.writeUInt16LE(dosDate, 14);

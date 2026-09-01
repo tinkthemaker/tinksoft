@@ -33,6 +33,6 @@ if (over.length > 0) {
 } else {
   const worst = pages[0];
   console.log(
-    `[size-gate] ${pages.length} pages, worst ${kb(worst.gz)} KB gz (${((worst.gz / BUDGET) * 100).toFixed(1)}% of 14.0 KB budget)`
+    `[size-gate] ${pages.length} pages, worst ${kb(worst.gz)} KB gz (${((worst.gz / BUDGET) * 100).toFixed(1)}% of ${kb(BUDGET)} KB budget)`
   );
 }
