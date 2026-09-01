@@ -1,0 +1,158 @@
+---
+import Base from '../layouts/Base.astro';
+
+const greetz =
+  'GREETZ TO: everyone still hand-writing HTML  ::  16colo.rs  ::  textfiles.com  ::  wiby.me  ::  512kb.club  ::  neocities  ::  the small web  ::  and you, reading the source  ::  ';
+---
+<Base title={'demo \u2014 TinkSoft'} description="A pure-CSS demoscene demo part.">
+  <header class="demo-head scene-panel">
+    <p class="scene-label">[DEMO PARTS]</p>
+    <p class="eyebrow">PUBLIC NODE // CSS ONLY</p>
+    <h1>demo</h1>
+    <p>Three little scene parts, rendered by the browser and nothing else.</p>
+  </header>
+
+  <div class="parts">
+    <section class="scene-panel">
+      <p class="scene-label">[01 // RASTER]</p>
+      <div class="bars" aria-hidden="true"></div>
+      <h2>raster / copper bars</h2>
+      <p>Repeating color bands slide across a fixed strip, like a scanline-era copper effect.</p>
+    </section>
+
+    <section class="scene-panel">
+      <p class="scene-label">[02 // PLASMA]</p>
+      <div class="plasma" aria-hidden="true"></div>
+      <h2>plasma field</h2>
+      <p>Four translucent radial gradients drift at different speeds and directions until their colors interfere.</p>
+    </section>
+
+    <section class="scene-panel">
+      <p class="scene-label">[03 // GREETZ]</p>
+      <div class="scroller" aria-hidden="true">
+        <span class="scroller-strip">{greetz}<span class="scroller-copy">{greetz}</span></span>
+      </div>
+      <h2>greetz scroller</h2>
+      <p>A duplicated inline strip travels left so the loop can return without a seam.</p>
+    </section>
+  </div>
+
+  <section class="explanation scene-panel">
+    <p class="scene-label">[SOURCE NOTES]</p>
+    <h2>how the parts work</h2>
+    <p>
+      This is plain CSS: gradients provide the pixels and keyframes provide the
+      motion. There are 0 bytes of JavaScript in this page or anywhere else on
+      the site.
+    </p>
+    <h3>small signal, no payload</h3>
+    <p>
+      The demo costs only the page's own CSS. The bars repeat a linear gradient,
+      the plasma layers combine radial gradients, and the scroller moves an
+      inline-block with <code>transform</code>. No canvas, image, library, or
+      external font is needed.
+    </p>
+    <h3>respect the terminal operator</h3>
+    <p>
+      Under <code>prefers-reduced-motion: reduce</code>, every animation stops.
+      The bars and plasma remain in a readable static frame, while the scroller
+      stays at the start of its text instead of leaving an empty track. The
+      layout also stays usable at the existing 30rem mobile breakpoint.
+    </p>
+  </section>
+
+  <style>
+    .demo-head { margin-bottom: 2rem; border-left: 4px solid var(--accent); }
+    .demo-head h1 { margin: 0.25rem 0; }
+    .demo-head > p:last-child { margin: 0; color: var(--muted); }
+    .parts { display: grid; gap: 1.25rem; }
+    .parts .scene-panel { overflow: hidden; }
+    .parts h2, .explanation h2 { margin: 1.25rem 0 0.35rem; font-size: 1.05rem; }
+    .parts p:last-child { margin-bottom: 0; color: var(--muted); }
+    .bars {
+      height: 5rem;
+      border: 1px solid var(--frame);
+      background-color: var(--panel-2);
+      background-image: repeating-linear-gradient(
+        0deg,
+        color-mix(in srgb, var(--accent) 55%, var(--ink)) 0 0.12rem,
+        var(--accent) 0.12rem 0.33rem,
+        color-mix(in srgb, var(--accent) 55%, var(--ink)) 0.33rem 0.45rem,
+        color-mix(in srgb, var(--accent-2) 55%, var(--ink)) 0.45rem 0.57rem,
+        var(--accent-2) 0.57rem 0.78rem,
+        color-mix(in srgb, var(--accent-2) 55%, var(--ink)) 0.78rem 0.9rem,
+        color-mix(in srgb, var(--hot) 55%, var(--ink)) 0.9rem 1.02rem,
+        var(--hot) 1.02rem 1.23rem,
+        color-mix(in srgb, var(--hot) 55%, var(--ink)) 1.23rem 1.35rem,
+        var(--panel) 1.35rem 1.5rem
+      );
+      background-size: 100% 6rem;
+      animation: bars 4s linear infinite;
+    }
+    .plasma {
+      position: relative;
+      height: 10rem;
+      overflow: hidden;
+      border: 1px solid var(--frame);
+      background-color: var(--code-bg);
+      background-image:
+        radial-gradient(circle at 20% 35%, var(--accent) 0 7%, transparent 42%),
+        radial-gradient(circle at 80% 65%, var(--accent-2) 0 9%, transparent 46%),
+        radial-gradient(circle at 50% 50%, var(--hot) 0 6%, transparent 40%);
+      background-size: 52% 68%, 64% 58%, 45% 75%;
+      background-repeat: repeat;
+      background-position: 0% 0%, 100% 100%, 50% 50%;
+      animation: plasma 17s linear infinite alternate;
+    }
+    .plasma::before {
+      position: absolute;
+      inset: -25%;
+      background: radial-gradient(circle at 60% 40%, var(--accent) 0 8%, transparent 42%);
+      background-size: 58% 72%;
+      background-repeat: repeat;
+      background-position: 0% 0%;
+      content: '';
+      opacity: 0.72;
+      animation: plasma-glow 11s linear infinite alternate-reverse;
+    }
+    .scroller {
+      overflow: hidden;
+      border: 1px solid var(--frame);
+      background: var(--code-bg);
+      color: var(--code-ink);
+      line-height: 1.5;
+    }
+    .scroller-strip {
+      display: inline-block;
+      min-width: max-content;
+      padding: 0.8rem 0;
+      white-space: nowrap;
+      animation: scroller 28s linear infinite;
+    }
+    .scroller-copy { display: inline-block; }
+    .explanation { margin-top: 1.25rem; border-left: 4px solid var(--accent-2); }
+    .explanation h2 { margin-top: 0.25rem; }
+    .explanation h3 { margin-bottom: 0.25rem; }
+    .explanation p:last-child { margin-bottom: 0; }
+    @keyframes bars {
+      to { background-position: 0 6rem; }
+    }
+    @keyframes plasma {
+      to { background-position: 100% 100%, 0% 0%, 100% 50%; }
+    }
+    @keyframes plasma-glow {
+      to { background-position: 100% 100%; }
+    }
+    @keyframes scroller {
+      to { transform: translateX(-50%); }
+    }
+    @media (max-width: 30rem) {
+      .bars { height: 4rem; }
+      .plasma { height: 8rem; }
+      .scroller-strip { font-size: 0.78rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bars, .plasma, .plasma::before, .scroller-strip { animation: none; }
+    }
+  </style>
+</Base>

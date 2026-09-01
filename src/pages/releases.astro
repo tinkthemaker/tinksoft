@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title={'releases \u2014 TinkSoft'} description="Scene-style release archives for tinksoft.com.">
+  <header class="release-head scene-panel">
+    <p class="scene-label">[SCENE RELEASE]</p>
+    <p class="eyebrow">ARCHIVE // DISTRIBUTION</p>
+    <h1>releases</h1>
+    <p>A small, self-contained text release: every log post in plain text, the site NFO, and SHA-256 sums.</p>
+  </header>
+
+  <section class="release-info scene-panel">
+    <p class="scene-label">[LATEST DROP]</p>
+    <table class="log">
+      <tr><td class="date">file</td><td><a href="@REL_PATH@">@REL_NAME@</a></td></tr>
+      <tr><td class="date">size</td><td>@REL_KB@ KB</td></tr>
+      <tr><td class="date">sha256</td><td class="hash">@REL_SHA@</td></tr>
+      <tr><td class="date">entries</td><td>@REL_FILES@ files</td></tr>
+      <tr><td class="date">download</td><td><a class="action" href="@REL_PATH@">download release</a></td></tr>
+    </table>
+  </section>
+
+  <section class="release-notes scene-panel">
+    <p class="scene-label">[VERIFY]</p>
+    <p>
+      The archive contains the plain-text log files, the site NFO, and checksums
+      for every entry except the checksum manifest itself.
+    </p>
+    <pre>sha256sum @REL_NAME@
+unzip -l @REL_NAME@</pre>
+  </section>
+
+  <style>
+    .release-head { margin-bottom: 2rem; border-left: 4px solid var(--accent-2); }
+    .release-head h1 { margin: 0.25rem 0; }
+    .release-head > p:last-child { margin: 0; color: var(--muted); }
+    .release-info { margin-bottom: 1.25rem; }
+    .release-info table tr:last-child { border-bottom: 0; }
+    .hash { overflow-wrap: anywhere; font-size: 0.82rem; }
+    .release-notes { border-left: 4px solid var(--hot); }
+    .release-notes p:not(.scene-label) { max-width: 68ch; }
+    .release-notes pre {
+      margin-bottom: 0;
+      padding: 1rem;
+      overflow-x: auto;
+      color: var(--code-ink);
+      background: var(--code-bg);
+      border: 1px solid var(--frame);
+      box-shadow: 3px 3px 0 var(--shadow);
+      font-size: 0.84rem;
+      line-height: 1.5;
+    }
+  </style>
+</Base>
