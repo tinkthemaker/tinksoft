@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "node scripts/stamp.mjs && astro build && node scripts/release.mjs && node scripts/colophon-stats.mjs && node scripts/size-gate.mjs && node scripts/checksums.mjs",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "test": "node --test",
+    "validate": "npm test && npm run build && node scripts/validate-build.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.0",

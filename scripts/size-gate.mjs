@@ -1,9 +1,10 @@
 import { writeFileSync } from 'node:fs';
 import { BUDGET, measure } from './lib/measure.mjs';
+import { buildDate, formatBuildTimestamp } from './lib/build-time.mjs';
 
 const DIST = 'dist';
 const kb = (bytes) => (bytes / 1024).toFixed(1);
-const builtAt = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+const builtAt = formatBuildTimestamp(buildDate());
 const pages = measure(DIST).sort((a, b) => b.gz - a.gz);
 const width = Math.max(3, ...pages.map((page) => page.url.length));
 

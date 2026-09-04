@@ -2,8 +2,21 @@
 interface Props {
   title: string;
   description?: string;
+  type?: 'website' | 'article';
+  publishedAt?: Date;
+  tags?: string[];
+  canonicalPath?: string;
+  noindex?: boolean;
 }
-const { title, description = 'TinkSoft — notes on software, security, games, and whatever else interests me.' } = Astro.props;
+const {
+  title,
+  description = 'TinkSoft — notes on software, security, games, and whatever else interests me.',
+  type = 'website',
+  publishedAt,
+  tags = [],
+  canonicalPath,
+  noindex = false,
+} = Astro.props;
 const path = Astro.url.pathname;
 
 const nav = [
@@ -48,7 +61,27 @@ const footerLinks = [
   { href: '/humans.txt', label: 'humans.txt' },
   { href: 'https://github.com/tinkthemaker/', label: 'github', me: true },
 ];
-const canonical = new URL(path, Astro.site);
+const canonical = new URL(canonicalPath ?? path, Astro.site);
+const siteRoot = new URL('/', Astro.site);
+const feed = new URL('/rss.xml', Astro.site);
+const sitemap = new URL('/sitemap-index.xml', Astro.site);
+const schemaType = type === 'article' ? 'BlogPosting' : path === '/' ? 'WebSite' : 'WebPage';
+const structuredData = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': schemaType,
+  name: schemaType === 'WebSite' ? 'TinkSoft' : pageLabel,
+  ...(type === 'article' ? { headline: pageLabel } : {}),
+  description,
+  url: canonical.href,
+  ...(schemaType !== 'WebSite' ? {
+    isPartOf: { '@type': 'WebSite', name: 'TinkSoft', url: siteRoot.href },
+  } : {}),
+  ...(type === 'article' ? {
+    datePublished: publishedAt?.toISOString(),
+    keywords: tags,
+    author: { '@type': 'Person', name: 'Tink', url: new URL('/about/', Astro.site).href },
+  } : {}),
+}).replace(/</g, '\\u003c');
 const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cstyle%3Erect%7Bfill:%23f4f0e4%7Dtext%7Bfill:%23008080%7D@media(prefers-color-scheme:dark)%7Brect%7Bfill:%23161613%7Dtext%7Bfill:%233fbdb0%7D%7D%3C/style%3E%3Crect width='32' height='32'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='bold' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E";
 ---
 <!doctype html>
@@ -57,18 +90,28 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content={description} />
+  <meta name="author" content="Tink" />
+  {noindex && <meta name="robots" content="noindex,follow" />}
   <title>{title}</title>
   <link rel="canonical" href={canonical} />
   <link rel="icon" href={favicon} type="image/svg+xml" />
-  <link rel="alternate" type="application/rss+xml" title="TinkSoft posts" href="/rss.xml" />
-  <link rel="sitemap" href="/sitemap-index.xml" />
+  <link rel="alternate" type="application/rss+xml" title="TinkSoft posts" href={feed} />
+  <link rel="sitemap" type="application/xml" title="TinkSoft sitemap" href={sitemap} />
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:" />
   <meta name="theme-color" content="#f4f0e4" media="(prefers-color-scheme: light)" />
   <meta name="theme-color" content="#161613" media="(prefers-color-scheme: dark)" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:type" content="website" />
+  <meta property="og:type" content={type} />
   <meta property="og:url" content={canonical} />
+  <meta property="og:site_name" content="TinkSoft" />
+  <meta property="og:locale" content="en_US" />
+  {publishedAt && <meta property="article:published_time" content={publishedAt.toISOString()} />}
+  {tags.map((tag) => <meta property="article:tag" content={tag} />)}
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <script type="application/ld+json" set:html={structuredData}></script>
   <style is:global>
     :root {
       --bg: #f1eddf;
