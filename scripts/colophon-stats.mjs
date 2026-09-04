@@ -1,15 +1,19 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { BUDGET, measure } from './lib/measure.mjs';
+import { buildDate, formatBuildTimestamp, reproducibleBuild } from './lib/build-time.mjs';
 
 const DIST = 'dist';
 const kb = (n) => (n / 1024).toFixed(1);
 
 let duration = '?';
-if (existsSync('.build-start')) {
+if (reproducibleBuild()) {
+  // Elapsed wall time would make otherwise reproducible output differ per run.
+  duration = '0.0';
+} else if (existsSync('.build-start')) {
   duration = ((Date.now() - Number(readFileSync('.build-start', 'utf8'))) / 1000).toFixed(1);
 }
-const builtAt = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+const builtAt = formatBuildTimestamp(buildDate());
 
 const colophon = join(DIST, 'colophon', 'index.html');
 const template = readFileSync(colophon, 'utf8');

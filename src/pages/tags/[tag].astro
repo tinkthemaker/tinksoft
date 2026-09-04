@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { collectTags } from '../../lib/content.mjs';
 
 type TagPage = {
   name: string;
@@ -10,18 +11,7 @@ type TagPage = {
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  const tags = new Map<string, TagPage>();
-  const slug = (tag: string) =>
-    tag.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-
-  for (const post of posts) {
-    for (const name of post.data.tags) {
-      const path = slug(name);
-      const entry = tags.get(path) ?? { name, path, posts: [] };
-      entry.posts.push(post);
-      tags.set(path, entry);
-    }
-  }
+  const tags = collectTags(posts);
 
   return Array.from(tags.values()).map((tag) => ({
     params: { tag: tag.path },

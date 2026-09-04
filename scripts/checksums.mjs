@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
+import { buildDate, formatBuildTimestamp } from './lib/build-time.mjs';
 
 const DIST = 'dist';
 const SKIP = new Set(['checksums.txt']);
@@ -24,7 +25,7 @@ const lines = walk(DIST)
 
 const header = [
   '# tinksoft.com deploy manifest',
-  `# generated ${new Date().toISOString().slice(0, 16).replace('T', ' ')} UTC`,
+  `# generated ${formatBuildTimestamp(buildDate())}`,
   '# verify a file: sha256sum -c <(grep <filename> checksums.txt)',
   '',
 ].join('\n');

@@ -1,25 +1,42 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
+import { tagPath } from '../../lib/content.mjs';
 
 export async function getStaticPaths() {
   const posts = (await getCollection('blog')).sort(
     (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
   );
-  return posts.map((post, i) => ({
-    params: { slug: post.id },
-    props: { post, newer: posts[i - 1], older: posts[i + 1] },
-  }));
+  const projects = await getCollection('projects');
+  return posts.map((post, i) => {
+    const postTags = new Set(post.data.tags);
+    const relatedPosts = posts
+      .filter((candidate) => candidate.id !== post.id && candidate.data.tags.some((tag) => postTags.has(tag)))
+      .slice(0, 3);
+    const relatedProjects = projects.filter(
+      (project) => project.data.tag && postTags.has(project.data.tag)
+    );
+    return {
+      params: { slug: post.id },
+      props: { post, newer: posts[i - 1], older: posts[i + 1], relatedPosts, relatedProjects },
+    };
+  });
 }
 
-const { post, newer, older } = Astro.props;
+const { post, newer, older, relatedPosts, relatedProjects } = Astro.props;
 const { Content, headings } = await render(post);
 const fmt = (d: Date) => d.toISOString().slice(0, 10);
 const words = (post.body ?? '').split(/\s+/).filter(Boolean).length;
 const minutes = Math.max(1, Math.ceil(words / 220));
 const sections = headings.filter((heading) => heading.depth === 2);
 ---
-<Base title={`${post.data.title} — TinkSoft`} description={post.data.description}>
+<Base
+  title={`${post.data.title} — TinkSoft`}
+  description={post.data.description}
+  type="article"
+  publishedAt={post.data.date}
+  tags={post.data.tags}
+>
   <header class="post-head scene-panel">
     <p class="scene-label">[TRANSMISSION]</p>
     <p class="eyebrow">FILE // {post.id}.txt</p>
@@ -32,7 +49,7 @@ const sections = headings.filter((heading) => heading.depth === 2);
     </dl>
     {post.data.tags.length > 0 && (
       <nav class="tag-row" aria-label="post tags">
-        {post.data.tags.map((tag) => <a href={`/tags/${tag}/`}>#{tag}</a>)}
+        {post.data.tags.map((tag) => <a href={`/tags/${tagPath(tag)}/`}>#{tag}</a>)}
       </nav>
     )}
   </header>
@@ -52,6 +69,40 @@ const sections = headings.filter((heading) => heading.depth === 2);
       <Content />
     </article>
   </div>
+
+  {(relatedPosts.length > 0 || relatedProjects.length > 0) && (
+    <section class="connections scene-panel" aria-labelledby="connected-files">
+      <h2 class="scene-label" id="connected-files">[CONNECTED FILES]</h2>
+      <div class="connections-grid">
+        {relatedProjects.length > 0 && (
+          <section aria-labelledby="connected-projects">
+            <h3 id="connected-projects">project files</h3>
+            <ul>
+              {relatedProjects.map((project) => (
+                <li>
+                  <a href={`/projects/${project.id}/`}>{project.data.title}</a>
+                  <span>{project.data.description}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+        {relatedPosts.length > 0 && (
+          <section aria-labelledby="related-posts">
+            <h3 id="related-posts">related posts</h3>
+            <ul>
+              {relatedPosts.map((related) => (
+                <li>
+                  <a href={`/log/${related.id}/`}>{related.data.title}</a>
+                  <time datetime={related.data.date.toISOString()}>{fmt(related.data.date)}</time>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </div>
+    </section>
+  )}
 
   {(newer || older) && (
     <>
@@ -81,6 +132,13 @@ const sections = headings.filter((heading) => heading.depth === 2);
     .contents li + li { margin-top: 0.45rem; }
     .prose :global(h2) { scroll-margin-top: 1rem; }
     .prose :global(p), .prose :global(li) { max-width: 70ch; }
+    .connections { margin-top: 2.25rem; }
+    .connections-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.5rem; }
+    .connections h3 { margin: 0 0 0.6rem; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .connections ul { margin: 0; padding: 0; list-style: none; }
+    .connections li { padding: 0.45rem 0; border-bottom: 1px dotted var(--rule); }
+    .connections li span { display: block; color: var(--muted); font-size: 0.78rem; }
+    .connections time { display: block; color: var(--muted); font-size: 0.72rem; font-variant-numeric: tabular-nums; }
     @media (max-width: 52rem) {
       .post-layout.has-sections { grid-template-columns: 1fr; }
       .contents { grid-column: 1; grid-row: 1; position: static; }

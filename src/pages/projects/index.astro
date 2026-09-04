@@ -1,13 +1,10 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { PROJECT_STATUS } from '../../lib/content.mjs';
 
 const projects = await getCollection('projects');
 const posts = await getCollection('blog');
-const order = { wip: 0, shipped: 1, idea: 2 };
-const statusName = { wip: 'active', shipped: 'shipped', idea: 'queued' };
-const statusCode = { wip: 'RUN', shipped: 'OK', idea: 'WAIT' };
-const statusNote = { wip: 'work in progress', shipped: 'released and in use', idea: 'not started' };
 const fmt = (date: Date) => date.toISOString().slice(0, 10);
 const started = (project: (typeof projects)[number]) => project.data.started?.valueOf() ?? 0;
 const relatedPosts = (tag?: string) => tag ? posts.filter((post) => post.data.tags.includes(tag)) : [];
@@ -16,7 +13,7 @@ const lastUpdate = (project: (typeof projects)[number]) => {
   return dates.length ? new Date(Math.max(...dates)) : project.data.started;
 };
 const sorted = [...projects].sort(
-  (a, b) => order[a.data.status] - order[b.data.status] || started(b) - started(a)
+  (a, b) => PROJECT_STATUS[a.data.status].order - PROJECT_STATUS[b.data.status].order || started(b) - started(a)
 );
 const counts = {
   wip: projects.filter((project) => project.data.status === 'wip').length,
@@ -59,12 +56,13 @@ const counts = {
       {sorted.map((project, index) => {
         const updates = relatedPosts(project.data.tag);
         const updated = lastUpdate(project);
+        const status = PROJECT_STATUS[project.data.status];
         return (
           <article class={`project-card state-${project.data.status}`}>
             <header class="card-header">
               <span class="file-number">{String(index + 1).padStart(2, '0')}</span>
               <span class={`state status-${project.data.status === 'shipped' ? 'ship' : project.data.status}`}>
-                {statusCode[project.data.status]} / {statusName[project.data.status].toUpperCase()}
+                {status.code} / {status.name.toUpperCase()}
               </span>
             </header>
             <div class="card-body">
@@ -72,7 +70,7 @@ const counts = {
               <p>{project.data.description}</p>
             </div>
             <dl class="card-meta">
-              <div><dt>state</dt><dd>{statusNote[project.data.status]}</dd></div>
+              <div><dt>state</dt><dd>{status.note}</dd></div>
               {project.data.started && (
                 <div><dt>started</dt><dd><time datetime={fmt(project.data.started)}>{fmt(project.data.started)}</time></dd></div>
               )}

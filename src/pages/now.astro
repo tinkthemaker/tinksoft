@@ -1,7 +1,18 @@
 ---
 import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
 // Edit this page whenever your focus changes, and bump the date below.
 const updated = '2026-08-24';
+const [posts, projects] = await Promise.all([
+  getCollection('blog'),
+  getCollection('projects'),
+]);
+const recent = posts
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+const matchingProjects = (post: (typeof posts)[number]) =>
+  projects.filter((project) => project.data.tag && post.data.tags.includes(project.data.tag));
+const fmt = (date: Date) => date.toISOString().slice(0, 10);
 ---
 <Base title="now — TinkSoft" description="What Tink is focused on right now.">
   <header class="now-head scene-panel">
@@ -9,27 +20,53 @@ const updated = '2026-08-24';
     <p class="eyebrow">OPERATOR // TINK</p>
     <h1>now</h1>
     <p>A short list of what I am working on and reading.</p>
-    <p class="stamp"><span class="led" aria-hidden="true"></span>UPDATED {updated}</p>
+    <p class="stamp"><span class="led" aria-hidden="true"></span>UPDATED <time datetime={updated}>{updated}</time></p>
   </header>
 
   <div class="now-grid">
-    <section class="scene-panel">
-      <p class="scene-label">[ACTIVE QUEUE]</p>
+    <section class="scene-panel" aria-labelledby="active-queue">
+      <h2 class="scene-label" id="active-queue">[ACTIVE QUEUE]</h2>
       <ol class="queue">
         <li>
-          <strong>tinksoft.com</strong>
+          <strong><a href="/projects/tinksoft-site/">tinksoft.com</a></strong>
           <span>Cleaning up the site and moving notes into it.</span>
         </li>
         <li>
-          <strong>PulpDescent</strong>
+          <strong><a href="/projects/pulpdescent/">PulpDescent</a></strong>
           <span>Playing through the content-and-balance phase and recording where it drags.</span>
         </li>
       </ol>
     </section>
 
-    <section class="scene-panel">
-      <p class="scene-label">[INPUT BUFFER]</p>
+    <section class="scene-panel" aria-labelledby="input-buffer">
+      <h2 class="scene-label" id="input-buffer">[INPUT BUFFER]</h2>
       <p>AI model releases, developer tools, and old scene zines.</p>
+    </section>
+
+    <section class="activity scene-panel" aria-labelledby="recent-activity">
+      <h2 class="scene-label" id="recent-activity">[RECENT ACTIVITY]</h2>
+      <ol class="activity-list">
+        {recent.map((post) => {
+          const relatedProjects = matchingProjects(post);
+          return (
+            <li>
+              <time datetime={post.data.date.toISOString()}>{fmt(post.data.date)}</time>
+              <div>
+                <h3><a href={`/log/${post.id}/`}>{post.data.title}</a></h3>
+                {post.data.description && <p>{post.data.description}</p>}
+                {relatedProjects.length > 0 && (
+                  <nav class="activity-projects" aria-label={`projects connected to ${post.data.title}`}>
+                    project // {relatedProjects.map((project, index) => (
+                      <><a href={`/projects/${project.id}/`}>{project.data.title}</a>{index < relatedProjects.length - 1 && ', '}</>
+                    ))}
+                  </nav>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+      <p class="all-activity">browse the <a href="/archive/">complete post archive</a> or <a href="/projects/">project directory</a>.</p>
     </section>
   </div>
 
@@ -43,8 +80,16 @@ const updated = '2026-08-24';
     .queue li { display: grid; grid-template-columns: 2rem 10rem minmax(0, 1fr); gap: 0.75rem; padding: 0.8rem 0; border-bottom: 1px dotted var(--rule); counter-increment: queue; }
     .queue li::before { content: counter(queue, decimal-leading-zero); color: var(--accent); font-size: 0.72rem; }
     .queue span { color: var(--muted); }
+    .activity { grid-column: 1 / -1; }
+    .activity-list { margin: 0; padding: 0; list-style: none; }
+    .activity-list li { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1rem; padding: 0.8rem 0; border-bottom: 1px dotted var(--rule); }
+    .activity-list time { color: var(--muted); font-size: 0.76rem; font-variant-numeric: tabular-nums; }
+    .activity-list h3 { margin: 0; font-size: 1rem; }
+    .activity-list p { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.82rem; }
+    .activity-projects { margin-top: 0.25rem; color: var(--accent); font-size: 0.72rem; text-transform: uppercase; }
+    .all-activity { margin: 0.9rem 0 0; color: var(--muted); font-size: 0.78rem; }
     .now-grid section > p:last-child { margin-bottom: 0; }
     @media (max-width: 48rem) { .now-grid { grid-template-columns: 1fr; } }
-    @media (max-width: 34rem) { .queue li { grid-template-columns: 1.5rem 1fr; } .queue span { grid-column: 2; } }
+    @media (max-width: 34rem) { .queue li { grid-template-columns: 1.5rem 1fr; } .queue span { grid-column: 2; } .activity-list li { grid-template-columns: 1fr; gap: 0.2rem; } }
   </style>
 </Base>
