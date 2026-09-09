@@ -1,11 +1,10 @@
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { deflateRawSync } from 'node:zlib';
+import { buildDate } from './lib/build-time.mjs';
 
 const DIST = 'dist';
-const releaseDate = process.env.SOURCE_DATE_EPOCH
-  ? new Date(Number(process.env.SOURCE_DATE_EPOCH) * 1000)
-  : new Date();
+const releaseDate = buildDate();
 const date = releaseDate.toISOString().slice(0, 10).replaceAll('-', '');
 const releaseName = `tinksoft-${date}.zip`;
 const releaseDir = `${DIST}/releases`;
@@ -54,9 +53,17 @@ const crc32 = (buf) => {
   return (value ^ 0xffffffff) >>> 0;
 };
 
-const dosTime = 0;
-const year = releaseDate.getUTCFullYear();
-const dosDate = ((year - 1980) << 9) | ((releaseDate.getUTCMonth() + 1) << 5) | releaseDate.getUTCDate();
+// ZIP's DOS timestamp range is 1980-2107. Clamp only the archive metadata;
+// the release filename continues to reflect the requested build date.
+const zipDate = new Date(
+  Math.min(Date.UTC(2107, 11, 31, 23, 59, 58), Math.max(Date.UTC(1980, 0, 1), releaseDate.valueOf()))
+);
+const dosTime =
+  (zipDate.getUTCHours() << 11) | (zipDate.getUTCMinutes() << 5) | Math.floor(zipDate.getUTCSeconds() / 2);
+const dosDate =
+  ((zipDate.getUTCFullYear() - 1980) << 9) |
+  ((zipDate.getUTCMonth() + 1) << 5) |
+  zipDate.getUTCDate();
 const localParts = [];
 const centralParts = [];
 let offset = 0;

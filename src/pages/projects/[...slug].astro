@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
+import { PROJECT_STATUS } from '../../lib/content.mjs';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -12,9 +13,7 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
-const statusName = { shipped: 'shipped', wip: 'active', idea: 'queued' };
-const statusCode = { shipped: 'OK', wip: 'RUN', idea: 'WAIT' };
-const statusNote = { shipped: 'released and in use', wip: 'work in progress', idea: 'not started' };
+const status = PROJECT_STATUS[project.data.status];
 const related = project.data.tag
   ? (await getCollection('blog'))
       .filter((post) => post.data.tags.includes(project.data.tag!))
@@ -31,7 +30,7 @@ const visitHost = project.data.link ? new URL(project.data.link).hostname : unde
       <div class="hero-bar">
         <span>PROJECT FILE / {project.id.toUpperCase()}</span>
         <span class={`state status-${project.data.status === 'shipped' ? 'ship' : project.data.status}`}>
-          {statusCode[project.data.status]} / {statusName[project.data.status].toUpperCase()}
+          {status.code} / {status.name.toUpperCase()}
         </span>
       </div>
       <div class="hero-copy">
@@ -41,7 +40,7 @@ const visitHost = project.data.link ? new URL(project.data.link).hostname : unde
       </div>
 
       <dl class="project-meta">
-        <div><dt>state</dt><dd>{statusNote[project.data.status]}</dd></div>
+        <div><dt>state</dt><dd>{status.note}</dd></div>
         {project.data.started && (
           <div><dt>started</dt><dd><time datetime={fmt(project.data.started)}>{fmt(project.data.started)}</time></dd></div>
         )}

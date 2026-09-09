@@ -12,6 +12,9 @@ const greetz =
     <p>Three little scene parts, rendered by the browser and nothing else.</p>
   </header>
 
+  <input class="motion-toggle" id="pause-motion" type="checkbox" />
+  <label class="motion-label" for="pause-motion">pause animations</label>
+
   <div class="parts">
     <section class="scene-panel">
       <p class="scene-label">[01 // RASTER]</p>
@@ -54,6 +57,7 @@ const greetz =
     </p>
     <h3>respect the terminal operator</h3>
     <p>
+      Use the pause control above to stop or resume the motion at any time.
       Under <code>prefers-reduced-motion: reduce</code>, every animation stops.
       The bars and plasma remain in a readable static frame, while the scroller
       stays at the start of its text instead of leaving an empty track. The
@@ -65,6 +69,10 @@ const greetz =
     .demo-head { margin-bottom: 2rem; border-left: 4px solid var(--accent); }
     .demo-head h1 { margin: 0.25rem 0; }
     .demo-head > p:last-child { margin: 0; color: var(--muted); }
+    .motion-toggle { accent-color: var(--accent); }
+    .motion-label { display: inline-block; padding: 0.4rem 0.25rem; margin-bottom: 1rem; cursor: pointer; }
+    .motion-toggle:checked ~ .parts :is(.bars, .plasma, .scroller-strip),
+    .motion-toggle:checked ~ .parts .plasma::before { animation-play-state: paused; }
     .parts { display: grid; gap: 1.25rem; }
     .parts .scene-panel { overflow: hidden; }
     .parts h2, .explanation h2 { margin: 1.25rem 0 0.35rem; font-size: 1.05rem; }

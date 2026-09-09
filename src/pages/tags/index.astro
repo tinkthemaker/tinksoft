@@ -1,22 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { collectTags } from '../../lib/content.mjs';
 
 const posts = await getCollection('blog');
-const slug = (tag: string) =>
-  tag.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-
-const tags = Array.from(
-  posts.reduce((index, post) => {
-    for (const tag of post.data.tags) {
-      const key = slug(tag);
-      const entry = index.get(key) ?? { name: tag, count: 0 };
-      entry.count += 1;
-      index.set(key, entry);
-    }
-    return index;
-  }, new Map<string, { name: string; count: number }>())
-).map(([path, data]) => ({ path, ...data }))
+const tags = Array.from(collectTags(posts).values())
+  .map(({ name, path, posts }) => ({ name, path, count: posts.length }))
   .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 
 const maxCount = Math.max(...tags.map((tag) => tag.count), 1);
