@@ -8,11 +8,16 @@
     "build": "node scripts/stamp.mjs && astro build && node scripts/release.mjs && node scripts/colophon-stats.mjs && node scripts/size-gate.mjs && node scripts/checksums.mjs",
     "preview": "astro preview",
     "test": "node --test",
-    "validate": "npm test && npm run build && node scripts/validate-build.mjs"
+    "check": "astro check",
+    "validate": "npm run check && npm test && npm run build && node scripts/validate-build.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.0",
     "@astrojs/sitemap": "^3.0.0",
     "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^5.9.3"
   }
 }

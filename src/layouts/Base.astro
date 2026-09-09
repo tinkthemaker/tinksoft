@@ -111,7 +111,7 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <script type="application/ld+json" set:html={structuredData}></script>
+  <script is:inline type="application/ld+json" set:html={structuredData}></script>
   <style is:global>
     :root {
       --bg: #f1eddf;
@@ -122,16 +122,16 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
       --visited: #6b2d83;
       --rule: #777264;
       --frame: #4f4c42;
-      --accent: #00736f;
+      --accent: #006661;
       --accent-2: #9c2dad;
-      --hot: #985900;
+      --hot: #854d00;
       --muted: #575449;
       --badge-bg: #ded5bd;
       --code-bg: #171713;
       --code-ink: #5dff7d;
       --quote-ink: #3e3d36;
       --ship: #006b35;
-      --wip: #9a4e00;
+      --wip: #864300;
       --shadow: #afa58c;
       color-scheme: light dark;
     }
@@ -188,7 +188,7 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
     }
     a:visited { color: var(--visited); }
     a:hover { background: var(--ink); color: var(--bg); text-decoration: none; }
-    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
     .skip {
       position: fixed;
       z-index: 20;
@@ -394,11 +394,11 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
 </head>
 <body>
   <a class="skip" href="#main">skip to content</a>
-  <div class="system-bar" aria-label="site status">
-    <span>TINKSOFT // PUBLIC NODE 01</span>
-    <span class="system-state"><span class="led" aria-hidden="true"></span>ONLINE &middot; STATIC</span>
-  </div>
   <header>
+    <div class="system-bar">
+      <span>TINKSOFT // PUBLIC NODE 01</span>
+      <span class="system-state"><span class="led" aria-hidden="true"></span>ONLINE &middot; STATIC</span>
+    </div>
     <div class="masthead">
       <div>
         <a class="logo" href="/" aria-label="TinkSoft home" style="text-decoration:none"><pre class="ascii" aria-hidden="true">
