@@ -10,9 +10,13 @@ export async function getStaticPaths() {
   const projects = await getCollection('projects');
   return posts.map((post, i) => {
     const postTags = new Set(post.data.tags);
-    const relatedPosts = posts
-      .filter((candidate) => candidate.id !== post.id && candidate.data.tags.some((tag) => postTags.has(tag)))
-      .slice(0, 3);
+    const relatedPosts: typeof posts = [];
+    for (const candidate of posts) {
+      if (candidate.id !== post.id && candidate.data.tags.some((tag) => postTags.has(tag))) {
+        relatedPosts.push(candidate);
+        if (relatedPosts.length === 3) break;
+      }
+    }
     const relatedProjects = projects.filter(
       (project) => project.data.tag && postTags.has(project.data.tag)
     );
