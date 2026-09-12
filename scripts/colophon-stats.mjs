@@ -6,6 +6,9 @@ import { buildDate, formatBuildTimestamp, reproducibleBuild } from './lib/build-
 const DIST = 'dist';
 const kb = (n) => (n / 1024).toFixed(1);
 
+const ENTITIES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (c) => ENTITIES[c]);
+
 let duration = '?';
 if (reproducibleBuild()) {
   // Elapsed wall time would make otherwise reproducible output differ per run.
@@ -30,27 +33,34 @@ function aggregate(files) {
   return { files, rawTotal, gzTotal, heaviest };
 }
 
-function render(stats) {
-  return template
-    .replaceAll('@PAGES@', String(stats.files.length))
-    .replaceAll('@RAW_KB@', kb(stats.rawTotal))
-    .replaceAll('@GZ_KB@', kb(stats.gzTotal))
-    .replaceAll('@AVG_GZ@', kb(stats.gzTotal / stats.files.length))
-    .replaceAll('@HEAVIEST@', stats.heaviest.url)
-    .replaceAll('@HEAVIEST_GZ@', kb(stats.heaviest.gz))
-    .replaceAll('@BUDGET_KB@', kb(BUDGET))
-    .replaceAll('@WORST_PCT@', ((stats.heaviest.gz / BUDGET) * 100).toFixed(1))
-    .replaceAll('@BUILD_S@', duration)
-    .replaceAll('@BUILT_AT@', builtAt);
+function render(template, stats, { duration, builtAt }) {
+  const values = {
+    '@PAGES@': stats.files.length,
+    '@RAW_KB@': kb(stats.rawTotal),
+    '@GZ_KB@': kb(stats.gzTotal),
+    '@AVG_GZ@': kb(stats.gzTotal / stats.files.length),
+    '@HEAVIEST@': stats.heaviest.url,
+    '@HEAVIEST_GZ@': kb(stats.heaviest.gz),
+    '@BUDGET_KB@': kb(BUDGET),
+    '@WORST_PCT@': ((stats.heaviest.gz / BUDGET) * 100).toFixed(1),
+    '@BUILD_S@': duration,
+    '@BUILT_AT@': builtAt,
+  };
+  let html = template;
+  for (const [token, value] of Object.entries(values)) {
+    html = html.replaceAll(token, escapeHtml(value));
+  }
+  return html;
 }
 
 // The colophon page displays its own metrics, so substituting the values
 // changes the page's measured size. Iterate to a fixed point so the published
 // totals and heaviest-page values reflect the final bytes, not placeholders.
-let html = render(aggregate(measure(DIST)));
+const context = { duration, builtAt };
+let html = render(template, aggregate(measure(DIST)), context);
 for (let i = 0; i < 5; i++) {
   writeFileSync(colophon, html);
-  const next = render(aggregate(measure(DIST)));
+  const next = render(template, aggregate(measure(DIST)), context);
   if (next === html) break;
   html = next;
 }
