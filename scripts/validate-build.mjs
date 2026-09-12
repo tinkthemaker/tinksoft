@@ -6,6 +6,9 @@ import { inflateRawSync } from 'node:zlib';
 const DIST = resolve('dist');
 const SITE = 'https://tinksoft.com';
 const errors = [];
+const SAFE_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'tel:']);
+const DATA_URL_ELEMENTS = new Set(['img', 'link']);
+const EVENT_HANDLER = /(?:^|[\s"'/])on[a-z]+\s*=/i;
 
 function walk(dir) {
   const files = [];
@@ -91,45 +94,81 @@ function validateHtml(files) {
       if (type !== 'application/ld+json') errors.push(`${url}: executable <script> is not allowed`);
     }
 
-    for (const match of html.matchAll(/\b(?:href|src)\s*=\s*(["'])(.*?)\1/gi)) {
-      const value = match[2].replaceAll('&amp;', '&');
-      if (!value || /^(?:data:|mailto:|tel:)/i.test(value)) continue;
-      if (/^javascript:/i.test(value)) {
-        errors.push(`${url}: unsafe URL ${value}`);
-        continue;
+    for (const tag of html.matchAll(/<([a-z][a-z0-9-]*)\b([^>]*)>/gi)) {
+      const element = tag[1].toLowerCase();
+      const attributes = tag[2];
+      if (EVENT_HANDLER.test(attributes)) errors.push(`${url}: inline event handler on <${element}>`);
+      if (element === 'meta' && /\bhttp-equiv\s*=\s*(["'])?\s*refresh\s*\1/i.test(attributes)) {
+        errors.push(`${url}: <meta http-equiv="refresh"> is not allowed`);
       }
 
-      let targetUrl;
-      try {
-        targetUrl = new URL(value, `${SITE}${url}`);
-      } catch {
-        errors.push(`${url}: invalid URL ${value}`);
-        continue;
-      }
-      if (targetUrl.origin !== SITE) continue;
+      for (const match of attributes.matchAll(/\b(href|src)\s*=\s*(["'])(.*?)\2/gi)) {
+        const value = decodeEntities(match[3]);
+        if (!value) continue;
 
-      const target = localTarget(targetUrl.pathname);
-      if (!target) {
-        errors.push(`${url}: broken local reference ${value}`);
-        continue;
-      }
-
-      if (targetUrl.hash && extname(target) === '.html') {
-        let fragment;
+        let targetUrl;
         try {
-          fragment = decodeURIComponent(targetUrl.hash.slice(1));
+          targetUrl = new URL(stripUrlNoise(value), `${SITE}${url}`);
         } catch {
-          errors.push(`${url}: invalid fragment in ${value}`);
+          errors.push(`${url}: invalid URL ${value}`);
           continue;
         }
-        if (fragment && !idsIn(load(target)).includes(fragment)) {
-          errors.push(`${url}: missing fragment target ${value}`);
+
+        const dataAllowed = targetUrl.protocol === 'data:' && DATA_URL_ELEMENTS.has(element) && /^data:image\//i.test(stripUrlNoise(value));
+        if (!SAFE_PROTOCOLS.has(targetUrl.protocol) && !dataAllowed) {
+          errors.push(`${url}: unsafe URL scheme in <${element} ${match[1].toLowerCase()}> ${value}`);
+          continue;
         }
+        if (targetUrl.origin !== SITE) continue;
+
+        checkLocalReference(url, value, targetUrl, load);
       }
     }
   }
 
   return htmlFiles.length;
+}
+
+function decodeEntities(text) {
+  return text
+    .replace(/&#x([0-9a-f]+);?/gi, (_, hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
+    .replace(/&#(\d+);?/g, (_, dec) => String.fromCodePoint(Number(dec)))
+    .replaceAll('&Tab;', '\t')
+    .replaceAll('&NewLine;', '\n')
+    .replaceAll('&colon;', ':')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&apos;', "'")
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&amp;', '&');
+}
+
+// Browsers trim leading/trailing C0 controls and spaces and drop tabs and
+// newlines anywhere before parsing a URL, so the scheme is checked on the
+// same normalized text the browser would see.
+function stripUrlNoise(value) {
+  return value.replaceAll(/^[\u0000-\u0020]+|[\u0000-\u0020]+$/g, '').replaceAll(/[\t\n\r]/g, '');
+}
+
+function checkLocalReference(url, value, targetUrl, load) {
+  const target = localTarget(targetUrl.pathname);
+  if (!target) {
+    errors.push(`${url}: broken local reference ${value}`);
+    return;
+  }
+
+  if (targetUrl.hash && extname(target) === '.html') {
+    let fragment;
+    try {
+      fragment = decodeURIComponent(targetUrl.hash.slice(1));
+    } catch {
+      errors.push(`${url}: invalid fragment in ${value}`);
+      return;
+    }
+    if (fragment && !idsIn(load(target)).includes(fragment)) {
+      errors.push(`${url}: missing fragment target ${value}`);
+    }
+  }
 }
 
 function validateManifest(files) {
