@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { collectTags, PROJECT_STATUS, tagPath } from '../src/lib/content.mjs';
+import { collectTags, contentId, PROJECT_STATUS, tagPath } from '../src/lib/content.mjs';
 
 const post = (...tags) => ({ data: { tags } });
 
@@ -40,6 +40,22 @@ test('collectTags rejects a tag that cannot form a path', () => {
     () => collectTags([post('+++')]),
     /does not produce a URL-safe path/,
   );
+});
+
+test('contentId derives a single-segment kebab-case id from slug or path', () => {
+  assert.equal(contentId('blog', { entry: 'hello-world.md', data: {} }), 'hello-world');
+  assert.equal(contentId('blog', { entry: 'hello-world.md', data: { slug: 'custom-2026' } }), 'custom-2026');
+});
+
+test('contentId rejects ids that could break routes or injected HTML', () => {
+  for (const slug of ['x"><b>evil</b>', 'a/b', 'Upper', 'with space', '-lead', 'trail-', '']) {
+    assert.throws(
+      () => contentId('blog', { entry: 'evil.md', data: { slug } }),
+      /must match/,
+      slug,
+    );
+  }
+  assert.throws(() => contentId('blog', { entry: 'nested/post.md', data: {} }), /must match/);
 });
 
 test('project status metadata keeps display values and ordering together', () => {

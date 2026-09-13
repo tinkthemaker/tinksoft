@@ -79,6 +79,21 @@ test('checksum manifests are stable and timestamped from SOURCE_DATE_EPOCH', () 
   assert.deepEqual(paths, ['nested/a-first.txt', 'z-last.txt']);
 });
 
+test('colophon stats HTML-escape every substituted value', () => {
+  const root = temporaryDirectory();
+  writeFixture(root, 'dist/colophon/index.html', '<a href="@HEAVIEST@">@HEAVIEST@</a> @BUILT_AT@');
+  writeFixture(root, 'dist/log/x"><b>evil</b>/index.html', `<p>${Array.from({ length: 800 }, (_, i) => (i * 7919).toString(36)).join(' ')}</p>`);
+  const epoch = Math.floor(Date.UTC(2026, 8, 3, 12, 34, 56) / 1000);
+
+  runScript('colophon-stats.mjs', root, epoch);
+  const page = readFileSync(join(root, 'dist', 'colophon', 'index.html'), 'utf8');
+
+  assert.equal(
+    page,
+    '<a href="/log/x&quot;&gt;&lt;b&gt;evil&lt;/b&gt;/">/log/x&quot;&gt;&lt;b&gt;evil&lt;/b&gt;/</a> 2026-09-03 12:34 UTC',
+  );
+});
+
 test('release archives are byte-for-byte stable for a fixed source epoch', () => {
   const root = temporaryDirectory();
   writeFixture(root, 'public/tinksoft.nfo', 'NFO\n');
