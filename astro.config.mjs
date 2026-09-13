@@ -3,12 +3,12 @@ import sitemap from '@astrojs/sitemap';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize';
 
-// Raw HTML in markdown bodies is parsed, then reduced to this allowlist. Shiki's inline
-// colours and Astro's heading ids are kept; everything else (scripts, event
-// handlers, <meta>, <iframe>, non-http(s) links) is dropped.
+// Raw HTML in markdown bodies is parsed, then reduced to this allowlist. Shiki's
+// inline colours are kept; everything else (scripts, event handlers, <meta>,
+// <iframe>, non-http(s) links) is dropped, and raw-HTML ids get the
+// `user-content-` clobber prefix. Astro assigns heading ids after this runs.
 const sanitizeSchema = {
   ...defaultSchema,
-  clobberPrefix: '',
   attributes: {
     ...defaultSchema.attributes,
     pre: ['className', 'style', 'tabIndex', 'dataLanguage'],

@@ -2,13 +2,13 @@ import { createHash } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { extname, join, relative, resolve, sep } from 'node:path';
 import { inflateRawSync } from 'node:zlib';
+import { parse } from 'parse5';
 
 const DIST = resolve('dist');
 const SITE = 'https://tinksoft.com';
 const errors = [];
 const SAFE_PROTOCOLS = new Set(['http:', 'https:', 'mailto:', 'tel:']);
 const DATA_URL_ELEMENTS = new Set(['img', 'link']);
-const EVENT_HANDLER = /(?:^|[\s"'/])on[a-z]+\s*=/i;
 
 function walk(dir) {
   const files = [];
@@ -40,70 +40,83 @@ function localTarget(pathname) {
   return existsSync(index) ? index : undefined;
 }
 
-function idsIn(html) {
-  const ids = [];
-  for (const match of html.matchAll(/\bid\s*=\s*(["'])(.*?)\1/gi)) ids.push(match[2]);
-  return ids;
+function elementsIn(document) {
+  const elements = [];
+  const stack = [document];
+  while (stack.length) {
+    const node = stack.pop();
+    if (node.tagName) elements.push(node);
+    const children = node.tagName === 'template' ? node.content?.childNodes : node.childNodes;
+    if (children) for (let index = children.length - 1; index >= 0; index -= 1) stack.push(children[index]);
+  }
+  return elements;
+}
+
+function attribute(element, name) {
+  return element.attrs.find((attr) => attr.name === name)?.value;
+}
+
+function idsIn(elements) {
+  return elements.map((element) => attribute(element, 'id')).filter((id) => id !== undefined);
 }
 
 function validateHtml(files) {
   const htmlFiles = files.filter((file) => extname(file) === '.html');
-  const htmlCache = new Map();
+  const elementCache = new Map();
   const load = (file) => {
-    if (!htmlCache.has(file)) htmlCache.set(file, readFileSync(file, 'utf8'));
-    return htmlCache.get(file);
+    if (!elementCache.has(file)) elementCache.set(file, elementsIn(parse(readFileSync(file, 'utf8'))));
+    return elementCache.get(file);
   };
 
   for (const file of htmlFiles) {
     const url = pageUrl(file);
-    const html = load(file);
-    for (const pattern of [
-      [/^<!doctype html>/i, 'doctype'],
-      [/<html(?:\s|>)/i, '<html>'],
-      [/<html\b[^>]*\blang\s*=\s*(["'])[^"']+\1/i, '<html lang>'],
-      [/<head(?:\s|>)/i, '<head>'],
-      [/<title(?:\s|>)/i, '<title>'],
-      [/<body(?:\s|>)/i, '<body>'],
-      [/<\/html>\s*$/i, 'closing </html>'],
-    ]) {
-      if (!pattern[0].test(html)) errors.push(`${url}: missing ${pattern[1]}`);
-    }
+    const html = readFileSync(file, 'utf8');
+    if (!/^<!doctype html>/i.test(html)) errors.push(`${url}: missing doctype`);
+    if (!/<\/html>\s*$/i.test(html)) errors.push(`${url}: missing closing </html>`);
 
     const placeholders = [...new Set(html.match(/@[A-Z][A-Z0-9_]*@/g) ?? [])];
     if (placeholders.length) errors.push(`${url}: unresolved placeholder(s): ${placeholders.join(', ')}`);
 
-    const ids = idsIn(html);
+    const elements = load(file);
+    const count = (name) => elements.filter((element) => element.tagName === name).length;
+    const root = elements.find((element) => element.tagName === 'html');
+    if (!/<html(?:\s|>)/i.test(html)) errors.push(`${url}: missing <html>`);
+    if (!root || !attribute(root, 'lang')) errors.push(`${url}: missing <html lang>`);
+    for (const name of ['head', 'title', 'body']) {
+      if (!new RegExp(`<${name}(?:\\s|>)`, 'i').test(html)) errors.push(`${url}: missing <${name}>`);
+    }
+
+    const ids = idsIn(elements);
     const duplicates = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))];
     if (duplicates.length) errors.push(`${url}: duplicate id(s): ${duplicates.join(', ')}`);
 
-    const mainCount = [...html.matchAll(/<main(?:\s|>)/gi)].length;
+    const mainCount = count('main');
     if (mainCount !== 1) errors.push(`${url}: expected one <main>, found ${mainCount}`);
-    const headingCount = [...html.matchAll(/<h1(?:\s|>)/gi)].length;
+    const headingCount = count('h1');
     if (headingCount !== 1) errors.push(`${url}: expected one <h1>, found ${headingCount}`);
 
-    for (const image of html.matchAll(/<img\b([^>]*)>/gi)) {
-      const attributes = image[1];
-      if (!/\balt\s*=\s*(["']).*?\1/is.test(attributes)) errors.push(`${url}: image is missing alt text`);
-      if (!/\bwidth\s*=\s*(["'])?\d+\1/i.test(attributes) || !/\bheight\s*=\s*(["'])?\d+\1/i.test(attributes)) {
-        errors.push(`${url}: image is missing numeric width/height attributes`);
+    for (const element of elements) {
+      const name = element.tagName;
+
+      if (name === 'img') {
+        if (attribute(element, 'alt') === undefined) errors.push(`${url}: image is missing alt text`);
+        if (!/^\d+$/.test(attribute(element, 'width') ?? '') || !/^\d+$/.test(attribute(element, 'height') ?? '')) {
+          errors.push(`${url}: image is missing numeric width/height attributes`);
+        }
       }
-    }
 
-    for (const script of html.matchAll(/<script\b([^>]*)>/gi)) {
-      const type = /\btype\s*=\s*(["'])(.*?)\1/i.exec(script[1])?.[2].toLowerCase();
-      if (type !== 'application/ld+json') errors.push(`${url}: executable <script> is not allowed`);
-    }
+      if (name === 'script' && attribute(element, 'type')?.toLowerCase() !== 'application/ld+json') {
+        errors.push(`${url}: executable <script> is not allowed`);
+      }
 
-    for (const tag of html.matchAll(/<([a-z][a-z0-9-]*)\b([^>]*)>/gi)) {
-      const element = tag[1].toLowerCase();
-      const attributes = tag[2];
-      if (EVENT_HANDLER.test(attributes)) errors.push(`${url}: inline event handler on <${element}>`);
-      if (element === 'meta' && /\bhttp-equiv\s*=\s*(["'])?\s*refresh\s*\1/i.test(attributes)) {
+      if (name === 'meta' && /^\s*refresh\s*$/i.test(attribute(element, 'http-equiv') ?? '')) {
         errors.push(`${url}: <meta http-equiv="refresh"> is not allowed`);
       }
 
-      for (const match of attributes.matchAll(/\b(href|src)\s*=\s*(["'])(.*?)\2/gi)) {
-        const value = decodeEntities(match[3]);
+      for (const attr of element.attrs) {
+        if (/^on/i.test(attr.name)) errors.push(`${url}: inline event handler on <${name}>`);
+        if (attr.name !== 'href' && attr.name !== 'src') continue;
+        const value = attr.value;
         if (!value) continue;
 
         let targetUrl;
@@ -114,9 +127,9 @@ function validateHtml(files) {
           continue;
         }
 
-        const dataAllowed = targetUrl.protocol === 'data:' && DATA_URL_ELEMENTS.has(element) && /^data:image\//i.test(stripUrlNoise(value));
+        const dataAllowed = targetUrl.protocol === 'data:' && DATA_URL_ELEMENTS.has(name) && /^data:image\//i.test(stripUrlNoise(value));
         if (!SAFE_PROTOCOLS.has(targetUrl.protocol) && !dataAllowed) {
-          errors.push(`${url}: unsafe URL scheme in <${element} ${match[1].toLowerCase()}> ${value}`);
+          errors.push(`${url}: unsafe URL scheme in <${name} ${attr.name}> ${value}`);
           continue;
         }
         if (targetUrl.origin !== SITE) continue;
@@ -127,20 +140,6 @@ function validateHtml(files) {
   }
 
   return htmlFiles.length;
-}
-
-function decodeEntities(text) {
-  return text
-    .replace(/&#x([0-9a-f]+);?/gi, (_, hex) => String.fromCodePoint(Number.parseInt(hex, 16)))
-    .replace(/&#(\d+);?/g, (_, dec) => String.fromCodePoint(Number(dec)))
-    .replaceAll('&Tab;', '\t')
-    .replaceAll('&NewLine;', '\n')
-    .replaceAll('&colon;', ':')
-    .replaceAll('&quot;', '"')
-    .replaceAll('&apos;', "'")
-    .replaceAll('&lt;', '<')
-    .replaceAll('&gt;', '>')
-    .replaceAll('&amp;', '&');
 }
 
 // Browsers trim leading/trailing C0 controls and spaces and drop tabs and
