@@ -18,6 +18,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "parse5": "^7.3.0",
+    "rehype-raw": "^7.0.0",
+    "rehype-sanitize": "^6.0.0",
     "typescript": "^5.9.3"
   }
 }
