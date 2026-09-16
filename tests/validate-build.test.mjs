@@ -65,6 +65,23 @@ for (const [name, body, diagnostic] of [
   ['duplicate IDs', '<p id="main">Duplicate</p>', /duplicate id\(s\): main/],
   ['executable scripts', '<script>console.log("unexpected")</script>', /executable <script> is not allowed/],
   ['images without accessible text', '<img src="data:image/svg+xml,test" width="1" height="1">', /image is missing alt text/],
+  ['javascript: links', '<a href="javascript:alert(1)">x</a>', /unsafe URL scheme in <a href> javascript:/],
+  ['tab-obfuscated javascript: links', '<a href="java\tscript:alert(1)">x</a>', /unsafe URL scheme in <a href>/],
+  ['whitespace-prefixed javascript: links', '<a href="  javascript:alert(1)">x</a>', /unsafe URL scheme in <a href>/],
+  ['entity-encoded javascript: links', '<a href="java&Tab;script&colon;alert(1)">x</a>', /unsafe URL scheme in <a href>/],
+  ['numeric-entity-encoded javascript: links', '<a href="&#x6A;avascript:alert(1)">x</a>', /unsafe URL scheme in <a href>/],
+  ['newline-obfuscated javascript: links', '<a href="java\nscript:alert(1)">x</a>', /unsafe URL scheme in <a href>/],
+  ['unquoted javascript: links', '<a href=javascript:alert(1)>x</a>', /unsafe URL scheme in <a href>/],
+  ['javascript: links hidden behind a quoted > in another attribute', '<a title=">" href="javascript:alert(1)">x</a>', /unsafe URL scheme in <a href>/],
+  ['out-of-range character references in links', '<a href="&#x110000;javascript:alert(1)">x</a>', /(?:broken local reference|unsafe URL scheme)/],
+  ['vbscript: links', '<a href="vbscript:msgbox(1)">x</a>', /unsafe URL scheme in <a href> vbscript:/],
+  ['data: links', '<a href="data:text/html,test">x</a>', /unsafe URL scheme in <a href> data:/],
+  ['non-image data: image sources', '<img src="data:text/html,test" alt="x" width="1" height="1">', /unsafe URL scheme in <img src> data:/],
+  ['inline event handlers', '<img src="/log/hello.txt" alt="x" width="1" height="1" onerror="alert(1)">', /inline event handler on <img>/],
+  ['inline event handlers without whitespace', '<p title="x"onclick="alert(1)">x</p>', /inline event handler on <p>/],
+  ['meta refresh redirects', '<meta http-equiv="refresh" content="0;url=https://attacker.example">', /<meta http-equiv="refresh"> is not allowed/],
+  ['entity-encoded meta refresh redirects', '<meta http-equiv="re&#x66;resh" content="0;url=https://attacker.example">', /<meta http-equiv="refresh"> is not allowed/],
+  ['unquoted meta refresh redirects', '<meta http-equiv=refresh content="0;url=https://attacker.example">', /<meta http-equiv="refresh"> is not allowed/],
 ]) {
   test(`build validator rejects ${name}`, (t) => {
     const root = fixture(t);
@@ -75,9 +92,9 @@ for (const [name, body, diagnostic] of [
   });
 }
 
-test('build validator allows structured data and encoded fragment targets', (t) => {
+test('build validator allows structured data, encoded fragment targets, and safe URL schemes', (t) => {
   const root = fixture(t);
-  write(root, 'dist/index.html', html('<p id="café">Target</p><a href="#caf%C3%A9">Jump</a><script type="application/ld+json">{"@type":"WebPage"}</script>'));
+  write(root, 'dist/index.html', html('<p id="café">Target</p><a href="#caf%C3%A9">Jump</a><script type="application/ld+json">{"@type":"WebPage"}</script><a href="https://example.com/?a=1&amp;b=2">Out</a><a href="mailto:hi@example.com">Mail</a><a href="tel:+15555550100">Call</a><img src="data:image/svg+xml,test" alt="icon" width="1" height="1"><link rel="icon" href="data:image/svg+xml,test">'));
   generate(root, 'checksums.mjs');
   generate(root, 'validate-build.mjs');
 });

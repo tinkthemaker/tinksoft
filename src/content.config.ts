@@ -2,6 +2,11 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { contentId } from './lib/content.mjs';
 
+const webUrl = z
+  .string()
+  .url()
+  .refine((value) => /^https?:$/.test(new URL(value).protocol), { message: 'Only http(s) URLs are allowed' });
+
 const blog = defineCollection({
   loader: glob({
     pattern: '**/*.md',
@@ -27,8 +32,8 @@ const projects = defineCollection({
     status: z.enum(['shipped', 'wip', 'idea']),
     description: z.string(),
     started: z.coerce.date().optional(),
-    link: z.string().url().optional(),
-    repo: z.string().url().optional(),
+    link: webUrl.optional(),
+    repo: webUrl.optional(),
     tag: z.string().optional(),
   }),
 });
