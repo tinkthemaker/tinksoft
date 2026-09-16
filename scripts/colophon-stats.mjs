@@ -2,12 +2,10 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { BUDGET, measure } from './lib/measure.mjs';
 import { buildDate, formatBuildTimestamp, reproducibleBuild } from './lib/build-time.mjs';
+import { escapeHtml } from './lib/html.mjs';
 
 const DIST = 'dist';
 const kb = (n) => (n / 1024).toFixed(1);
-
-const ENTITIES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (c) => ENTITIES[c]);
 
 let duration = '?';
 if (reproducibleBuild()) {
