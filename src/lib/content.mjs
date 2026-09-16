@@ -43,3 +43,25 @@ export const PROJECT_STATUS = Object.freeze({
   shipped: Object.freeze({ order: 1, name: 'shipped', code: 'OK', note: 'released and in use' }),
   idea: Object.freeze({ order: 2, name: 'queued', code: 'WAIT', note: 'not started' }),
 });
+
+const SAFE_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/**
+ * Derive a content entry id from its frontmatter `slug` or file path and reject
+ * anything outside the single-segment, kebab-case set every route expects.
+ *
+ * @param {string} collection
+ * @param {{ entry: string, data: Record<string, unknown> }} input
+ */
+export function contentId(collection, { entry, data }) {
+  const id =
+    typeof data.slug === 'string'
+      ? data.slug
+      : entry.replace(/\\/g, '/').replace(/\.mdx?$/, '');
+  if (!SAFE_ID.test(id)) {
+    throw new Error(
+      `${collection}/${entry}: id "${id}" must match ${SAFE_ID} (lowercase letters, digits, hyphens).`,
+    );
+  }
+  return id;
+}
