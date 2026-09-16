@@ -12,6 +12,7 @@ import {
   reproducibleBuild,
   sourceDateEpoch,
 } from '../scripts/lib/build-time.mjs';
+import { escapeHtml } from '../scripts/lib/html.mjs';
 
 const repoRoot = fileURLToPath(new URL('..', import.meta.url));
 const temporaryDirectories = [];
@@ -77,6 +78,25 @@ test('checksum manifests are stable and timestamped from SOURCE_DATE_EPOCH', () 
     .filter((line) => /^[a-f0-9]{64}  /.test(line))
     .map((line) => line.slice(66));
   assert.deepEqual(paths, ['nested/a-first.txt', 'z-last.txt']);
+});
+
+test('escapeHtml encodes every HTML-significant character', () => {
+  assert.equal(escapeHtml(`&<>"'`), '&amp;&lt;&gt;&quot;&#39;');
+});
+
+test('colophon stats HTML-escape substituted values', () => {
+  const root = temporaryDirectory();
+  writeFixture(root, 'dist/colophon/index.html', '<a href="@HEAVIEST@">@HEAVIEST@</a> @BUILT_AT@');
+  writeFixture(root, "dist/log/x&'evil/index.html", `<p>${Array.from({ length: 800 }, (_, i) => (i * 7919).toString(36)).join(' ')}</p>`);
+  const epoch = Math.floor(Date.UTC(2026, 8, 3, 12, 34, 56) / 1000);
+
+  runScript('colophon-stats.mjs', root, epoch);
+  const page = readFileSync(join(root, 'dist', 'colophon', 'index.html'), 'utf8');
+
+  assert.equal(
+    page,
+    '<a href="/log/x&amp;&#39;evil/">/log/x&amp;&#39;evil/</a> 2026-09-03 12:34 UTC',
+  );
 });
 
 test('release archives are byte-for-byte stable for a fixed source epoch', () => {
