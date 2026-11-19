@@ -1,4 +1,7 @@
 ---
+import { themeCss } from '../lib/theme.mjs';
+import { ART, TORCHES } from '../generated/dither-art.mjs';
+
 interface Props {
   title: string;
   description?: string;
@@ -82,7 +85,14 @@ const structuredData = JSON.stringify({
     author: { '@type': 'Person', name: 'Tink', url: new URL('/about/', Astro.site).href },
   } : {}),
 }).replace(/</g, '\\u003c');
-const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cstyle%3Erect%7Bfill:%23f4f0e4%7Dtext%7Bfill:%23008080%7D@media(prefers-color-scheme:dark)%7Brect%7Bfill:%23161613%7Dtext%7Bfill:%233fbdb0%7D%7D%3C/style%3E%3Crect width='32' height='32'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='20' font-weight='bold' text-anchor='middle'%3ET%3C/text%3E%3C/svg%3E";
+// The pixel diamond, as public/favicon.svg: gold edges and an ember core on the page colour.
+const favicon = 'data:image/svg+xml,' + encodeURIComponent(
+  "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 7 7' shape-rendering='crispEdges'>"
+  + '<style>.b{fill:#b99568}.g{fill:#3f2909}.c{fill:#6b130a}@media(prefers-color-scheme:dark){.b{fill:#1c130c}.g{fill:#d6a94e}.c{fill:#e8893a}}</style>'
+  + "<rect class='b' width='7' height='7'/><path class='g' d='M3 1h1v1H3zM2 2h3v1H2zM1 3h2v1H1zM4 3h2v1H4zM2 4h3v1H2zM3 5h1v1H3z'/>"
+  + "<rect class='c' x='3' y='3' width='1' height='1'/></svg>"
+);
+const themeStyle = `<style>${themeCss({ ...ART, torches: TORCHES })}</style>`;
 ---
 <!doctype html>
 <html lang="en">
@@ -99,8 +109,8 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
   <link rel="sitemap" type="application/xml" title="TinkSoft sitemap" href={sitemap} />
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; font-src 'self'" />
   <link rel="preload" href="/fonts/grenze-gotisch-700.woff2" as="font" type="font/woff2" crossorigin />
-  <meta name="theme-color" content="#f4f0e4" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#161613" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#b99568" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1c130c" media="(prefers-color-scheme: dark)" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content={type} />
@@ -113,6 +123,7 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <script is:inline type="application/ld+json" set:html={structuredData}></script>
+  <Fragment set:html={themeStyle} />
   <style is:global>
     @font-face {
       font-family: "Grenze Gotisch";
@@ -134,54 +145,12 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
       --f-display: "Grenze Gotisch", var(--serif);
       --f-plate: "Silkscreen", var(--mono);
     }
-    :root {
-      --bg: #f1eddf;
-      --panel: #e8e1cf;
-      --panel-2: #ddd4bd;
-      --ink: #171713;
-      --link: #0039a6;
-      --visited: #6b2d83;
-      --rule: #777264;
-      --frame: #4f4c42;
-      --accent: #006661;
-      --accent-2: #9c2dad;
-      --hot: #854d00;
-      --muted: #575449;
-      --badge-bg: #ded5bd;
-      --code-bg: #171713;
-      --code-ink: #5dff7d;
-      --quote-ink: #3e3d36;
-      --ship: #006b35;
-      --wip: #864300;
-      --shadow: #afa58c;
-      color-scheme: light dark;
-    }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #121310;
-        --panel: #1b1d18;
-        --panel-2: #25271f;
-        --ink: #e1ddcf;
-        --link: #82adff;
-        --visited: #d59bf0;
-        --rule: #505348;
-        --frame: #66695b;
-        --accent: #49d6c9;
-        --accent-2: #d66cff;
-        --hot: #ffca5c;
-        --muted: #a19d90;
-        --badge-bg: #282a22;
-        --code-bg: #090a08;
-        --code-ink: #52ff78;
-        --quote-ink: #c0bcaf;
-        --ship: #65d47c;
-        --wip: #ffb75c;
-        --shadow: #080906;
-      }
-    }
+    /* Colour tokens come from src/lib/theme.mjs, inlined just above this style. */
     * { box-sizing: border-box; }
     html {
-      background: var(--bg);
+      background:
+        repeating-conic-gradient(color-mix(in srgb, var(--ink) var(--grain), transparent) 0 25%, transparent 0 50%) 0 0 / 4px 4px,
+        var(--bg);
       scroll-behavior: smooth;
     }
     body {
@@ -197,19 +166,23 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
     body::before {
       content: '';
       display: block;
-      height: 4px;
+      height: 28px;
       margin: 0 -1.25rem;
-      background: linear-gradient(90deg, var(--accent) 0 36%, var(--accent-2) 36% 60%, var(--hot) 60% 78%, var(--ink) 78%);
+      background: var(--strip) 0 0 / 32px 28px repeat-x;
+      image-rendering: pixelated;
     }
-    ::selection { background: var(--accent); color: var(--bg); }
+    ::selection { background: var(--hi-bg); color: var(--hi-ink); }
     a {
       color: var(--link);
       text-decoration-thickness: 1px;
       text-underline-offset: 0.18em;
     }
     a:visited { color: var(--visited); }
-    a:hover { background: var(--ink); color: var(--bg); text-decoration: none; }
-    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    /* The site's one deliberate !important: page-scoped link colours must never beat the highlight. */
+    a:hover, a:focus-visible { color: var(--hi-ink) !important; background-color: var(--hi-bg) !important; text-decoration: none; box-shadow: 0 0 0 2px var(--hi-bg); outline: none; }
+    a:focus-visible { box-shadow: 0 0 0 2px var(--hi-bg), 0 0 0 4px var(--hi-ink); }
+    a:is(:hover, :focus-visible) * { color: inherit !important; }
+    :focus-visible { outline: 2px solid var(--torch); outline-offset: 3px; }
     .skip {
       position: fixed;
       z-index: 20;
@@ -226,15 +199,16 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
     h1, h2, h3 { font-family: inherit; line-height: 1.18; text-wrap: balance; }
     h1 {
       margin: 0 0 0.8rem;
-      font-size: clamp(1.65rem, 4vw, 2.25rem);
-      letter-spacing: -0.035em;
+      font: 700 clamp(36px, 7vw, 54px)/1.02 var(--f-display);
+      font-synthesis: none;
     }
+    h1::first-letter { color: var(--rubric); }
     h2 {
       margin-top: 2.4rem;
       font-size: 1.25rem;
     }
     main > h2::before, .content > h2::before { content: '// '; color: var(--accent); }
-    h3 { margin-top: 1.75rem; font-size: 1.05rem; color: var(--hot); }
+    h3 { margin-top: 1.75rem; font-family: var(--serif); font-size: 1.05rem; font-weight: bold; color: var(--torch); }
     p { max-width: 76ch; }
     hr {
       border: none;
@@ -310,8 +284,9 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
     }
     .navitem { display: inline-block; white-space: nowrap; }
     nav.site a[aria-current='page'] {
-      color: var(--bg);
-      background: var(--accent);
+      color: var(--hi-ink);
+      background: var(--hi-bg);
+      box-shadow: 0 0 0 2px var(--hi-bg);
       text-decoration: none;
       font-weight: bold;
     }
@@ -322,7 +297,7 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
       text-transform: uppercase;
       letter-spacing: 0.045em;
     }
-    nav.thread::before { content: 'PATH :: '; color: var(--accent); font-weight: bold; }
+    nav.thread::before { content: 'PATH :: '; color: var(--torch); font-weight: bold; }
     nav.thread ol { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
     nav.thread li:not(:last-child)::after { content: ' /'; color: var(--rule); }
     nav.thread [aria-current='page'] { color: var(--ink); font-weight: bold; }
@@ -408,7 +383,6 @@ const favicon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' vi
       table.log tr + tr { margin-top: 0.35rem; }
       nav.post-nav { grid-template-columns: 1fr; }
       .scene-panel { padding: 1rem; }
-      h1 { font-size: 1.6rem; }
     }
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   </style>
