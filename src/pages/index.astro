@@ -31,10 +31,10 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
         <time datetime={latest.data.date.toISOString()}>{fmt(latest.data.date)}</time>
       </header>
 
-      <article class="release">
+      <article class="release window">
         <p class="file-id">FILE // {latest.id}.txt</p>
         <h3><a href={`/log/${latest.id}/`}>{latest.data.title}</a></h3>
-        {latest.data.description && <p class="release-description">{latest.data.description}</p>}
+        {latest.data.description && <p class="release-description dropcap">{latest.data.description}</p>}
 
         {latest.data.tags.length > 0 && (
           <ul class="tags" aria-label="tags">
@@ -57,6 +57,8 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
     </section>
   )}
 
+  {archive.length > 0 && <div class="divider" aria-hidden="true"><i class="gem"></i></div>}
+
   {archive.length > 0 && (
     <section class="module archive" aria-labelledby="archive-label">
       <header class="module-header">
@@ -67,7 +69,7 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
       <ol class="archive-list">
         {archive.map((post, index) => (
           <li>
-            <article class="archive-entry">
+            <article class="archive-entry row-hover">
               <div class="archive-number" aria-hidden="true">
                 {String(index + 1).padStart(2, '0')}
               </div>
@@ -101,23 +103,19 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
     .kicker,
     .file-id {
       margin: 0;
-      color: var(--accent);
+      color: var(--gold);
       font-size: 0.72rem;
       font-weight: bold;
       letter-spacing: 0.08em;
     }
 
-    h1 {
-      margin: 0.25rem 0 0.6rem;
-      font-size: clamp(1.8rem, 6vw, 2.6rem);
-      letter-spacing: -0.04em;
-    }
+    h1 { margin: 0.25rem 0 0.6rem; }
 
     .lede {
       max-width: 38rem;
       margin: 0;
       color: var(--muted);
-      font-size: 1.02rem;
+      font: 17.5px/1.5 var(--serif);
     }
 
     .index-status {
@@ -155,32 +153,22 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
       font-size: 0.75rem;
     }
 
-    .release {
-      position: relative;
-      padding: 1.25rem;
-      border: 1px solid var(--rule);
-      border-left: 4px solid var(--accent);
-      background: color-mix(in srgb, var(--badge-bg) 38%, transparent);
-    }
+    .release { padding: 16px 18px; }
 
-    .release::after {
-      position: absolute;
-      right: 0.5rem;
-      bottom: 0.3rem;
-      color: var(--rule);
-      content: '//';
-      font-weight: bold;
-    }
-
-    .release h3 {
+    .release h3,
+    .archive-heading h3 {
       margin: 0.35rem 0 0;
-      font-size: clamp(1.25rem, 4vw, 1.65rem);
+      font: 700 21px/1.2 var(--serif);
+      color: var(--ink);
     }
+
+    .release h3 a,
+    .archive-heading h3 a { color: inherit; }
 
     .release-description {
       max-width: 36rem;
-      margin: 0.75rem 0;
-      color: var(--ink);
+      margin: 0.75rem 0 0.6rem;
+      font: 17.5px/1.62 var(--serif);
     }
 
     .tags {
@@ -189,13 +177,15 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
       gap: 0.3rem 0.55rem;
       margin: 0.65rem 0;
       padding: 0;
+      clear: both;
       color: var(--muted);
       font-size: 0.75rem;
       list-style: none;
     }
 
     .tags a { color: inherit; text-decoration: none; }
-    .tags a:hover { color: var(--bg); }
+
+    .divider { margin-bottom: 0; }
 
     .release-actions {
       display: flex;
@@ -223,8 +213,8 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
     }
 
     .archive-number {
-      padding-top: 0.1rem;
-      color: var(--accent);
+      padding-top: 0.25rem;
+      color: var(--torch);
       font-size: 0.72rem;
       font-weight: bold;
     }
@@ -238,7 +228,7 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
 
     .archive-heading h3 {
       margin: 0;
-      font-size: 1rem;
+      font-size: 18px;
     }
 
     .archive-heading time {
@@ -250,8 +240,7 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
     .archive-body > p {
       margin: 0.35rem 0 0;
       color: var(--muted);
-      font-size: 0.86rem;
-      line-height: 1.45;
+      font: 15.5px/1.5 var(--serif);
     }
 
     .archive-footer {

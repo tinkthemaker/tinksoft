@@ -466,6 +466,14 @@ const themeStyle = `<style>${themeCss({ ...ART, torches: TORCHES })}</style>`;
     .content strong { color: var(--torch); }
     .content :is(code, pre) { font-family: var(--mono); }
     .content :is(pre) {
+      /* Shiki's css-variables theme: an amber CRT in both schemes. Unset tokens fall back to the foreground. */
+      --astro-code-foreground: var(--code-ink);
+      --astro-code-background: var(--code-bg);
+      --astro-code-token-comment: #a99070;
+      --astro-code-token-keyword: #e8893a;
+      --astro-code-token-string: #f0c060;
+      --astro-code-token-function: #ffe3a3;
+      --astro-code-token-constant: #f0ac55;
       padding: 1rem;
       overflow-x: auto;
       color: var(--code-ink);

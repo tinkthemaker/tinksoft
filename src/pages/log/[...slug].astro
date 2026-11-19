@@ -119,28 +119,31 @@ const sections = headings.filter((heading) => heading.depth === 2);
   )}
 
   <style>
-    .post-head { margin-bottom: 2.25rem; border-left: 4px solid var(--accent); }
-    .post-head h1 { max-width: 22ch; margin: 0.3rem 0 0.65rem; }
-    .dek { max-width: 58ch; margin: 0; color: var(--muted); font-size: 1.02rem; }
+    .post-head { margin-bottom: 2.25rem; border-left: 4px solid var(--gold); }
+    .post-head h1 { max-width: 22ch; margin: 0.3rem 0 0.65rem; font-size: clamp(32px, 6vw, 44px); }
+    .dek { max-width: 58ch; margin: 0; color: var(--muted); font: italic 17.5px/1.5 var(--serif); }
     .post-facts { display: flex; flex-wrap: wrap; gap: 0.75rem 1.75rem; margin: 1.25rem 0 0; padding-top: 0.75rem; border-top: 1px dotted var(--rule); font-size: 0.76rem; }
     .post-facts div { display: grid; grid-template-columns: auto auto; gap: 0.55rem; }
     .post-facts dt { color: var(--muted); text-transform: uppercase; }
-    .post-facts dd { margin: 0; color: var(--ink); }
+    .post-facts dd { margin: 0; }
     .tag-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.9rem; }
-    .tag-row a { padding: 0.08rem 0.4rem; border: 1px solid var(--rule); background: var(--panel-2); font-size: 0.72rem; text-decoration: none; }
+    /* Chips sit on --panel by day: day --panel-2 can't carry text. */
+    .tag-row a { padding: 0.08rem 0.4rem; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); font-size: 0.72rem; text-decoration: none; }
+    @media (prefers-color-scheme: dark) { .tag-row a { background: var(--panel-2); } }
     .post-layout { display: grid; gap: 2rem; }
     .post-layout.has-sections { grid-template-columns: minmax(0, 1fr) 13rem; align-items: start; }
     .prose { grid-column: 1; grid-row: 1; }
-    .contents { grid-column: 2; grid-row: 1; position: sticky; top: 1rem; padding: 1rem; box-shadow: 3px 3px 0 var(--shadow); font-size: 0.74rem; }
+    .contents { grid-column: 2; grid-row: 1; position: sticky; top: 1rem; padding: 1rem; font-size: 0.74rem; }
     .contents ol { margin: 0; padding-left: 1.3rem; }
     .contents li + li { margin-top: 0.45rem; }
     .prose :global(h2) { scroll-margin-top: 1rem; }
     .prose :global(p), .prose :global(li) { max-width: 70ch; }
     .connections { margin-top: 2.25rem; }
     .connections-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.5rem; }
-    .connections h3 { margin: 0 0 0.6rem; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .connections h3 { margin: 0 0 0.6rem; font-size: 1rem; }
     .connections ul { margin: 0; padding: 0; list-style: none; }
     .connections li { padding: 0.45rem 0; border-bottom: 1px dotted var(--rule); }
+    .connections li > a { font: bold 1rem/1.35 var(--serif); }
     .connections li span { display: block; color: var(--muted); font-size: 0.78rem; }
     .connections time { display: block; color: var(--muted); font-size: 0.72rem; font-variant-numeric: tabular-nums; }
     @media (max-width: 52rem) {

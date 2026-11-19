@@ -105,3 +105,18 @@ test('prose headings use the diamond, not the old // prefix', () => {
 test('the footer divider is three CSS diamonds', () => {
   assert.match(base(), /<div class="divider" aria-hidden="true"><i class="gem sm"><\/i><i class="gem"><\/i><i class="gem sm"><\/i><\/div>/);
 });
+
+test('home features the latest post in a window with a drop cap and a divider', () => {
+  const home = read('src/pages/index.astro');
+  assert.match(home, /class="release window"/);
+  assert.match(home, /class="release-description dropcap"/);
+  assert.match(home, /<div class="divider" aria-hidden="true"><i class="gem"><\/i><\/div>/);
+  assert.match(home, /class="archive-entry row-hover"/);
+});
+
+test('code blocks keep syntax colours but draw them from the amber CRT palette', () => {
+  assert.match(read('astro.config.mjs'), /shikiConfig: \{ theme: 'css-variables' \}/);
+  const css = squash(base());
+  assert.ok(css.includes('--astro-code-foreground:var(--code-ink)'));
+  assert.ok(css.includes('--astro-code-background:var(--code-bg)'));
+});
