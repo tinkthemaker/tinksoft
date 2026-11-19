@@ -1,25 +1,19 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
-import { PROJECT_STATUS } from '../../lib/content.mjs';
+import { rosterRows } from '../../lib/content.mjs';
 
 const projects = await getCollection('projects');
 const posts = await getCollection('blog');
-const fmt = (date: Date) => date.toISOString().slice(0, 10);
-const started = (project: (typeof projects)[number]) => project.data.started?.valueOf() ?? 0;
-const relatedPosts = (tag?: string) => tag ? posts.filter((post) => post.data.tags.includes(tag)) : [];
-const lastUpdate = (project: (typeof projects)[number]) => {
-  const dates = relatedPosts(project.data.tag).map((post) => post.data.date.valueOf());
-  return dates.length ? new Date(Math.max(...dates)) : project.data.started;
-};
-const sorted = [...projects].sort(
-  (a, b) => PROJECT_STATUS[a.data.status].order - PROJECT_STATUS[b.data.status].order || started(b) - started(a)
-);
+const rows = rosterRows(projects, posts);
 const counts = {
   wip: projects.filter((project) => project.data.status === 'wip').length,
   shipped: projects.filter((project) => project.data.status === 'shipped').length,
   idea: projects.filter((project) => project.data.status === 'idea').length,
 };
+const statusClass = (status: string) => `status-${status === 'shipped' ? 'ship' : status}`;
+const rowMeta = (row: (typeof rows)[number]) =>
+  [row.since && `since ${row.since}`, `${row.notes} notes`, row.last && `last ${row.last}`].filter(Boolean).join(' · ');
 ---
 <Base title="projects — TinkSoft">
   <header class="project-header">
@@ -52,91 +46,96 @@ const counts = {
       <h2 class="plate" id="directory-heading">RELEASE FILES</h2>
       <span>SORT: STATE / DATE</span>
     </div>
-    <div class="project-grid">
-      {sorted.map((project, index) => {
-        const updates = relatedPosts(project.data.tag);
-        const updated = lastUpdate(project);
-        const status = PROJECT_STATUS[project.data.status];
-        return (
-          <article class={`project-card state-${project.data.status}`}>
-            <header class="card-header">
-              <span class="file-number">{String(index + 1).padStart(2, '0')}</span>
-              <span class={`state status-${project.data.status === 'shipped' ? 'ship' : project.data.status}`}>
-                {status.code} / {status.name.toUpperCase()}
-              </span>
-            </header>
-            <div class="card-body">
-              <h3><a href={`/projects/${project.id}/`}>{project.data.title}</a></h3>
-              <p>{project.data.description}</p>
-            </div>
-            <dl class="card-meta">
-              <div><dt>state</dt><dd>{status.note}</dd></div>
-              {project.data.started && (
-                <div><dt>started</dt><dd><time datetime={fmt(project.data.started)}>{fmt(project.data.started)}</time></dd></div>
-              )}
-              <div><dt>updates</dt><dd>{String(updates.length).padStart(2, '0')}</dd></div>
-              {updated && (
-                <div><dt>last file</dt><dd><time datetime={fmt(updated)}>{fmt(updated)}</time></dd></div>
-              )}
-            </dl>
-            <footer class="card-actions">
-              <a class="primary-action" href={`/projects/${project.id}/`}>open file</a>
-              {project.data.repo && <a href={project.data.repo}>source</a>}
-              {project.data.link && <a href={project.data.link}>visit</a>}
-            </footer>
-          </article>
-        );
-      })}
-    </div>
+    {rows.length > 0 && (
+      <table class="roster window">
+        <caption>Release files</caption>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">NAME</th>
+            <th scope="col">STATE</th>
+            <th scope="col" class="since">SINCE</th>
+            <th scope="col" class="notes">NOTES</th>
+            <th scope="col" class="last">LAST</th>
+            <th scope="col">FILES</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr class="row-hover">
+              <td class="num">{String(row.number).padStart(2, '0')}</td>
+              <td class="name">
+                <a href={`/projects/${row.id}/`}>{row.title}</a>
+                <span class="desc">{row.description}</span>
+                <span class="row-meta">{rowMeta(row)}</span>
+              </td>
+              <td class="state"><span class={statusClass(row.status)}>{row.code} · {row.name}</span></td>
+              <td class="since">{row.since ?? '—'}</td>
+              <td class="notes">{row.notes}</td>
+              <td class="last">{row.last ?? '—'}</td>
+              <td class="files">
+                {row.repo && <span>[<a href={row.repo}>src</a>]</span>}
+                {row.link && <span>[<a href={row.link}>visit</a>]</span>}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
   </section>
 
-  {sorted.length === 0 && <p><em>No project files.</em></p>}
+  {rows.length === 0 && <p><em>No project files.</em></p>}
 </Base>
 
 <style>
-  .project-header { border-left: 3px solid var(--accent); padding: 0.2rem 0 0.35rem 1rem; margin-bottom: 2rem; }
-  .eyebrow, .panel-title, .directory-link, .state, .file-number, dt { letter-spacing: 0.06em; text-transform: uppercase; }
-  .eyebrow { color: var(--muted); font-size: 0.72rem; margin: 0 0 0.4rem; }
-  .project-header h1 { font-size: clamp(1.8rem, 7vw, 2.8rem); margin: 0; }
-  .lede { max-width: 37rem; margin: 0.7rem 0; }
+  .project-header { border-left: 3px solid var(--gold); padding: 0.2rem 0 0.35rem 1rem; margin-bottom: 2rem; }
+  .eyebrow, .panel-title, .directory-link, .roster th { letter-spacing: 0.06em; text-transform: uppercase; }
+  .eyebrow { font-size: 0.72rem; margin: 0 0 0.4rem; }
+  .project-header h1 { margin: 0; }
+  .lede { max-width: 37rem; margin: 0.7rem 0; color: var(--muted); font: 17.5px/1.5 var(--serif); }
   .directory-link { font-size: 0.78rem; font-weight: bold; }
-  .status-board, .project-directory { border: 1px solid var(--rule); box-shadow: 3px 3px 0 var(--badge-bg); margin-top: 1.75rem; }
-  .panel-title { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--rule); background: var(--badge-bg); padding: 0.45rem 0.65rem; font-size: 0.72rem; }
-  .panel-title > span { color: var(--muted); white-space: nowrap; }
-  .status-totals { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .status-board, .project-directory { margin-top: 1.75rem; }
+  .panel-title { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 0.75rem; border-bottom: 2px solid var(--gold); font-size: 0.72rem; }
+  .panel-title > span { padding: 0 0.2rem 0.2rem 0; color: var(--muted); white-space: nowrap; }
+  .status-totals { display: grid; grid-template-columns: repeat(4, 1fr); border: 3px double var(--rule); background: var(--panel); box-shadow: 4px 4px 0 var(--shadow); }
   .status-totals > div { display: grid; gap: 0.1rem; padding: 0.8rem; border-right: 1px dotted var(--rule); }
   .status-totals > div:last-child { border-right: 0; }
-  .status-totals strong { font-size: 1.35rem; line-height: 1; }
+  .status-totals strong { font-size: 1.35rem; line-height: 1; font-variant-numeric: tabular-nums; }
   .status-totals span { color: var(--muted); font-size: 0.67rem; }
-  .project-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .project-card { display: flex; flex-direction: column; min-width: 0; border-bottom: 1px solid var(--rule); }
-  .project-card:nth-child(odd) { border-right: 1px solid var(--rule); }
-  .project-card:nth-last-child(-n + 2) { border-bottom: 0; }
-  .project-card:last-child:nth-child(odd) { grid-column: 1 / -1; border-right: 0; }
-  .card-header { display: flex; justify-content: space-between; gap: 0.5rem; padding: 0.45rem 0.7rem; border-bottom: 1px dotted var(--rule); font-size: 0.69rem; }
-  .file-number { color: var(--muted); }
-  .state { font-weight: bold; }
-  .status-idea { color: var(--muted); }
-  .card-body { padding: 0.8rem 0.8rem 0.4rem; }
-  .card-body h3 { font-size: 1.05rem; margin: 0 0 0.55rem; }
-  .card-body p { margin: 0; font-size: 0.88rem; }
-  .card-meta { margin: auto 0 0; padding: 0.75rem 0.8rem; font-size: 0.72rem; }
-  .card-meta > div { display: grid; grid-template-columns: 5.2rem 1fr; }
-  .card-meta dt { color: var(--muted); }
-  .card-meta dd { margin: 0; }
-  .card-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; border-top: 1px dotted var(--rule); padding: 0.6rem 0.8rem; font-size: 0.75rem; }
-  .card-actions a { display: inline-block; border: 1px solid var(--rule); padding: 0.08rem 0.42rem; text-decoration: none; }
-  .card-actions .primary-action { border-color: var(--accent); font-weight: bold; }
+  /* The party roster: one framed table, every field the old cards carried. */
+  .roster { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.8rem; }
+  .roster caption { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .roster th { padding: 0.5rem 0.65rem; border-bottom: 2px solid var(--gold); color: var(--gold); font-size: 0.7rem; text-align: left; white-space: nowrap; }
+  .roster td { padding: 0.6rem 0.65rem; vertical-align: top; }
+  .roster tbody tr + tr td { border-top: 1px dotted var(--rule); }
+  /* The roster already sits on --panel, so a hovered row sinks to --bg (every text pair is tested there). */
+  .roster tbody tr:hover > td { background: var(--bg); }
+  .roster tr:hover > td:first-child { box-shadow: inset 3px 0 0 var(--torch); }
+  .num, .since, .notes, .last { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .name a { font: bold 15px/1.3 var(--serif); }
+  .desc { display: block; margin-top: 0.15rem; color: var(--muted); font: 14px/1.45 var(--serif); }
+  .row-meta { display: none; color: var(--muted); }
+  .state { white-space: nowrap; }
+  .files span { white-space: nowrap; }
+  @media (max-width: 48rem) {
+    .roster .since, .roster .last { display: none; }
+  }
   @media (max-width: 38rem) {
     .status-totals { grid-template-columns: repeat(2, 1fr); }
     .status-totals > div:nth-child(2) { border-right: 0; }
     .status-totals > div:nth-child(-n + 2) { border-bottom: 1px dotted var(--rule); }
-    .project-grid { display: block; }
-    .project-card, .project-card:nth-child(odd), .project-card:nth-last-child(-n + 2) { border-right: 0; border-bottom: 1px solid var(--rule); }
-    .project-card:last-child { border-bottom: 0; }
+  }
+  @media (max-width: 30rem) {
+    .roster, .roster tbody, .roster td { display: block; }
+    .roster thead, .roster .notes { display: none; }
+    .roster tr { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 0 0.6rem; padding: 0.7rem 0.65rem; }
+    .roster tbody tr + tr { border-top: 1px dotted var(--rule); }
+    .roster tbody tr + tr td { border-top: 0; }
+    .roster td { padding: 0; }
+    .roster .files { grid-column: 2 / -1; margin-top: 0.35rem; }
+    .row-meta { display: block; margin-top: 0.3rem; font-size: 0.72rem; }
   }
   @media (max-width: 24rem) {
     .panel-title { align-items: flex-start; flex-direction: column; gap: 0.15rem; }
-    .card-meta > div { grid-template-columns: 4.8rem 1fr; }
   }
 </style>

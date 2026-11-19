@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { collectTags, contentId, PROJECT_STATUS, tagPath } from '../src/lib/content.mjs';
+import { collectTags, contentId, PROJECT_STATUS, rosterRows, tagPath } from '../src/lib/content.mjs';
 
 const post = (...tags) => ({ data: { tags } });
 
@@ -73,4 +73,38 @@ test('project status metadata keeps display values and ordering together', () =>
       ['idea', 2, 'WAIT', 'queued', 'not started'],
     ],
   );
+});
+
+const project = (id, status, started, extra = {}) =>
+  ({ id, data: { title: id, description: `${id} desc`, status, started: started && new Date(started), ...extra } });
+const dated = (date, ...tags) => ({ data: { date: new Date(date), tags } });
+
+test('rosterRows sorts by state then newest start and numbers from 1', () => {
+  const rows = rosterRows([
+    project('old-ship', 'shipped', '2025-07-15'),
+    project('idea', 'idea', '2026-05-01'),
+    project('new-wip', 'wip', '2026-06-09'),
+    project('old-wip', 'wip', '2026-03-01'),
+  ], []);
+  assert.deepEqual(rows.map((r) => [r.number, r.id]), [[1, 'new-wip'], [2, 'old-wip'], [3, 'old-ship'], [4, 'idea']]);
+  assert.deepEqual([rows[0].code, rows[0].name], ['RUN', 'active']);
+});
+
+test('rosterRows derives since, notes and last from tagged posts', () => {
+  const [row] = rosterRows(
+    [project('site', 'wip', '2026-06-09', { tag: 'meta', repo: 'https://github.com/x/site' })],
+    [dated('2026-11-18', 'meta'), dated('2026-08-24', 'meta', 'other'), dated('2026-12-01', 'elsewhere')],
+  );
+  assert.equal(row.since, '2026-06');
+  assert.equal(row.notes, '02');
+  assert.equal(row.last, '2026-11-18');
+  assert.equal(row.repo, 'https://github.com/x/site');
+  assert.equal(row.link, undefined);
+});
+
+test('rosterRows handles projects without a tag or start date', () => {
+  const [row] = rosterRows([project('bare', 'idea', undefined)], [dated('2026-11-18', 'meta')]);
+  assert.equal(row.since, null);
+  assert.equal(row.notes, '00');
+  assert.equal(row.last, null);
 });
