@@ -68,7 +68,7 @@ const visitHost = project.data.link ? new URL(project.data.link).hostname : unde
 
     <section class="file-section" aria-labelledby="readme-heading">
       <div class="section-bar">
-        <h2 id="readme-heading">[README]</h2>
+        <h2 class="plate" id="readme-heading">README</h2>
         <span>PLAIN TEXT / VERIFIED</span>
       </div>
       <div class="project-body content"><Content /></div>
@@ -76,7 +76,7 @@ const visitHost = project.data.link ? new URL(project.data.link).hostname : unde
 
     <section class="file-section updates" aria-labelledby="updates-heading">
       <div class="section-bar">
-        <h2 id="updates-heading">[FIELD NOTES]</h2>
+        <h2 class="plate" id="updates-heading">FIELD NOTES</h2>
         <span>{String(related.length).padStart(2, '0')} ENTRIES / NEWEST FIRST</span>
       </div>
       {related.length > 0 ? (
@@ -126,7 +126,6 @@ const visitHost = project.data.link ? new URL(project.data.link).hostname : unde
   .project-actions small { color: var(--muted); font-size: 0.65rem; overflow: hidden; text-overflow: ellipsis; }
   .project-actions a:hover small { color: inherit; }
   .file-section { margin-top: 1.75rem; }
-  .section-bar h2 { font-size: inherit; margin: 0; }
   .section-bar span { color: var(--muted); white-space: nowrap; }
   .project-body { padding: 0.45rem 1.1rem 1rem; }
   .project-body :global(h2) { border-bottom: 1px dotted var(--rule); padding-bottom: 0.35rem; font-size: 1rem; letter-spacing: 0.04em; text-transform: uppercase; }

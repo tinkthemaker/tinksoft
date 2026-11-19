@@ -27,7 +27,7 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
   {latest ? (
     <section class="module latest" aria-labelledby="latest-label">
       <header class="module-header">
-        <h2 id="latest-label">[LATEST DROP]</h2>
+        <h2 class="plate" id="latest-label">LATEST DROP</h2>
         <time datetime={latest.data.date.toISOString()}>{fmt(latest.data.date)}</time>
       </header>
 
@@ -51,7 +51,7 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
   ) : (
     <section class="module empty" aria-labelledby="empty-label">
       <header class="module-header">
-        <h2 id="empty-label">[ARCHIVE]</h2>
+        <h2 class="plate" id="empty-label">ARCHIVE</h2>
       </header>
       <p>NO FILES FOUND.</p>
     </section>
@@ -60,7 +60,7 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
   {archive.length > 0 && (
     <section class="module archive" aria-labelledby="archive-label">
       <header class="module-header">
-        <h2 id="archive-label">[ARCHIVE]</h2>
+        <h2 class="plate" id="archive-label">ARCHIVE</h2>
         <span>{archive.length} {archive.length === 1 ? 'FILE' : 'FILES'}</span>
       </header>
 
@@ -141,25 +141,16 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
 
     .module-header {
       display: flex;
-      align-items: baseline;
+      align-items: end;
       justify-content: space-between;
       gap: 1rem;
       margin-bottom: 0.75rem;
-      border-bottom: 1px solid var(--accent);
-    }
-
-    .module-header h2 {
-      margin: 0;
-      padding: 0.18rem 0.55rem;
-      background: var(--accent);
-      color: var(--bg);
-      font-size: 0.78rem;
-      letter-spacing: 0.06em;
+      border-bottom: 2px solid var(--gold);
     }
 
     .module-header time,
     .module-header > span {
-      padding-right: 0.2rem;
+      padding: 0 0.2rem 0.2rem 0;
       color: var(--muted);
       font-size: 0.75rem;
     }

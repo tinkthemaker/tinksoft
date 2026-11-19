@@ -82,3 +82,26 @@ test('the torch flicker stops for reduced motion and uses the generated position
   assert.ok(css.includes('var(--torch-l)') && css.includes('var(--torch-r)'));
   assert.ok(css.includes('steps(1)'));
 });
+
+const FLEURONS = /[❦☙❧]/;
+
+test('no Unicode fleurons anywhere in src', () => {
+  for (const file of files('src')) assert.doesNotMatch(readFileSync(file, 'utf8'), FLEURONS, file);
+});
+
+test('bracketed labels survive only on eyebrows and footer headings', () => {
+  for (const file of files('src').filter((f) => f.endsWith('.astro'))) {
+    for (const line of readFileSync(file, 'utf8').split('\n')) {
+      if (/>\[[A-Z0-9 /.:-]+\]</.test(line)) assert.match(line, /class="(eyebrow|footer-heading)"/, `${file}: ${line.trim()}`);
+    }
+  }
+});
+
+test('prose headings use the diamond, not the old // prefix', () => {
+  assert.doesNotMatch(base(), /content:\s*'\/\/ '/);
+  assert.match(squash(base()), /\.content>h2::before/);
+});
+
+test('the footer divider is three CSS diamonds', () => {
+  assert.match(base(), /<div class="divider" aria-hidden="true"><i class="gem sm"><\/i><i class="gem"><\/i><i class="gem sm"><\/i><\/div>/);
+});

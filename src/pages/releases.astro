@@ -3,14 +3,14 @@ import Base from '../layouts/Base.astro';
 ---
 <Base title={'releases \u2014 TinkSoft'} description="Scene-style release archives for tinksoft.com.">
   <header class="release-head scene-panel">
-    <p class="scene-label">[SCENE RELEASE]</p>
+    <p class="scene-label">SCENE RELEASE</p>
     <p class="eyebrow">ARCHIVE // DISTRIBUTION</p>
     <h1>releases</h1>
     <p>A small, self-contained text release: every log post in plain text, the site NFO, and SHA-256 sums.</p>
   </header>
 
   <section class="release-info scene-panel">
-    <p class="scene-label">[LATEST DROP]</p>
+    <p class="scene-label">LATEST DROP</p>
     <table class="log">
       <tr><td class="date">file</td><td><a href="@REL_PATH@">@REL_NAME@</a></td></tr>
       <tr><td class="date">size</td><td>@REL_KB@ KB</td></tr>
@@ -21,7 +21,7 @@ import Base from '../layouts/Base.astro';
   </section>
 
   <section class="release-notes scene-panel">
-    <p class="scene-label">[VERIFY]</p>
+    <p class="scene-label">VERIFY</p>
     <p>
       The archive contains the plain-text log files, the site NFO, and checksums
       for every entry except the checksum manifest itself.

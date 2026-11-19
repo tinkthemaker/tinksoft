@@ -207,14 +207,37 @@ const themeStyle = `<style>${themeCss({ ...ART, torches: TORCHES })}</style>`;
       margin-top: 2.4rem;
       font-size: 1.25rem;
     }
-    main > h2::before, .content > h2::before { content: '// '; color: var(--accent); }
+    /* The pixel diamond, the site's one ornament: a 5x5 diamond of box-shadow pixels, gold edges, ember core. */
+    .gem, main > h2:not(.plate, .scene-label)::before, .content > h2::before {
+      --p: 3px;
+      display: inline-block;
+      width: var(--p);
+      height: var(--p);
+      margin: calc(var(--p) * 2) calc(var(--p) * 2.5);
+      vertical-align: middle;
+      background: var(--torch);
+      box-shadow:
+        0 calc(var(--p) * -2) var(--gold),
+        calc(var(--p) * -1) calc(var(--p) * -1) var(--gold), 0 calc(var(--p) * -1) var(--gold), var(--p) calc(var(--p) * -1) var(--gold),
+        calc(var(--p) * -2) 0 var(--gold), calc(var(--p) * -1) 0 var(--gold), var(--p) 0 var(--gold), calc(var(--p) * 2) 0 var(--gold),
+        calc(var(--p) * -1) var(--p) var(--gold), 0 var(--p) var(--gold), var(--p) var(--p) var(--gold),
+        0 calc(var(--p) * 2) var(--gold);
+    }
+    .gem.sm { --p: 2px; }
+    main > h2:not(.plate, .scene-label)::before, .content > h2::before { content: ''; margin: 0 calc(var(--p) * 4) 0 calc(var(--p) * 2); }
+    @media (prefers-color-scheme: light) {
+      .gem, main > h2:not(.plate, .scene-label)::before, .content > h2::before { background: var(--rubric); }
+    }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 2.5rem 0; }
+    .divider::before, .divider::after, hr {
+      content: '';
+      flex: 1;
+      height: 4px;
+      background: repeating-conic-gradient(var(--gold) 0 25%, transparent 0 50%) 0 0 / 4px 4px;
+    }
     h3 { margin-top: 1.75rem; font-family: var(--serif); font-size: 1.05rem; font-weight: bold; color: var(--torch); }
     p { max-width: 76ch; }
-    hr {
-      border: none;
-      border-top: 1px solid var(--rule);
-      margin: 1.75rem 0;
-    }
+    hr { border: none; margin: 1.75rem 0; }
     main { min-width: 0; }
     .system-bar {
       display: flex;
@@ -392,30 +415,38 @@ const themeStyle = `<style>${themeCss({ ...ART, torches: TORCHES })}</style>`;
     nav.thread ol { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
     nav.thread li:not(:last-child)::after { content: ' /'; color: var(--rule); }
     nav.thread [aria-current='page'] { color: var(--ink); font-weight: bold; }
-    .scene-panel {
-      position: relative;
-      padding: 1.25rem;
-      border: 1px solid var(--frame);
+    /* Panels: a double rule frame and a hard shadow. Featured panels (.window) get a gold frame. */
+    .scene-panel, .footer-grid, nav.post-nav p, .window {
+      border: 3px double var(--rule);
       background: var(--panel);
       box-shadow: 4px 4px 0 var(--shadow);
     }
-    .scene-label {
+    .window { border-color: var(--gold); }
+    .scene-panel { position: relative; padding: 1.25rem; }
+    /* Section plates: a gold label in pixel type whose right edge dithers away. Brackets are gone. */
+    .plate, .scene-label {
+      position: relative;
       display: inline-block;
-      margin: -2rem 0 0.85rem -0.5rem;
-      padding: 0 0.45rem;
-      color: var(--accent);
-      background: var(--bg);
-      font-size: 0.75rem;
-      font-weight: bold;
-      letter-spacing: 0.06em;
+      margin: 0;
+      padding: 3px 12px 2px;
+      color: var(--bg);
+      background: var(--gold);
+      /* Silkscreen has one weight, so 700 + no synthesis keeps it at 400; the mono fallback renders bold. */
+      font: 700 16px/1.3 var(--f-plate);
+      font-synthesis: none;
+      letter-spacing: 0;
       text-transform: uppercase;
     }
-    .eyebrow { color: var(--accent); font-size: 0.75rem; font-weight: bold; letter-spacing: 0.08em; text-transform: uppercase; }
+    .plate::before, .plate::after, .scene-label::before, .scene-label::after { content: ''; position: absolute; top: 0; bottom: 0; }
+    .plate::after, .scene-label::after { left: 100%; width: 16px; background: repeating-conic-gradient(var(--gold) 0 25%, transparent 0 50%) 0 0 / 4px 4px; }
+    .plate::before, .scene-label::before { left: calc(100% + 16px); width: 12px; background: repeating-conic-gradient(var(--gold) 0 25%, transparent 0 100%) 0 0 / 4px 4px; }
+    .scene-label { margin: -2rem 0 0.85rem -0.5rem; }
+    .eyebrow { color: var(--gold); font-size: 0.75rem; font-weight: bold; letter-spacing: 0.08em; text-transform: uppercase; }
     .action {
       display: inline-block;
       padding: 0.2rem 0.55rem;
       border: 1px solid var(--rule);
-      background: var(--panel-2);
+      background: var(--panel);
       text-decoration: none;
       font-size: 0.78rem;
       font-weight: bold;
@@ -423,11 +454,17 @@ const themeStyle = `<style>${themeCss({ ...ART, torches: TORCHES })}</style>`;
     table.log { width: 100%; border-collapse: collapse; }
     table.log tr { border-bottom: 1px dotted var(--rule); }
     table.log td { padding: 0.65rem 0.75rem 0.65rem 0; vertical-align: top; }
+    /* List rows: tint and an ember bar on hover. Never --panel-2, which can't carry text by day. */
+    table.log tr:hover, .row-hover:hover { background: color-mix(in srgb, var(--panel) 70%, transparent); box-shadow: inset 3px 0 0 var(--torch); }
     td.date { white-space: nowrap; color: var(--muted); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
     .post-meta { color: var(--muted); font-size: 0.82rem; }
     nav.post-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
-    nav.post-nav p { margin: 0; padding: 0.75rem; border: 1px solid var(--rule); background: var(--panel); }
-    .content { max-width: 50rem; }
+    nav.post-nav p { margin: 0; padding: 0.75rem; }
+    /* Prose: an old-style serif with blackletter headings and an illuminated first letter. */
+    .content { max-width: 50rem; font: 17.5px/1.62 var(--serif); }
+    .content > h2 { font: 700 1.55em/1.1 var(--f-display); font-synthesis: none; }
+    .content strong { color: var(--torch); }
+    .content :is(code, pre) { font-family: var(--mono); }
     .content :is(pre) {
       padding: 1rem;
       overflow-x: auto;
@@ -435,15 +472,26 @@ const themeStyle = `<style>${themeCss({ ...ART, torches: TORCHES })}</style>`;
       background: var(--code-bg);
       border: 1px solid var(--frame);
       box-shadow: 3px 3px 0 var(--shadow);
+      text-shadow: 0 0 6px color-mix(in srgb, var(--code-ink) 35%, transparent);
       font-size: 0.84rem;
       line-height: 1.5;
     }
-    .content :is(code):not(pre code) { padding: 0.08rem 0.3rem; background: var(--badge-bg); color: var(--ink); }
-    .content blockquote { margin-left: 0; padding: 0.3rem 0 0.3rem 1rem; border-left: 3px solid var(--accent-2); color: var(--quote-ink); }
+    .content :is(code):not(pre code) { padding: 0.08rem 0.3rem; background: var(--code-bg); color: var(--code-ink); font-size: 0.86em; }
+    .content blockquote { margin-left: 0; padding: 0.3rem 0 0.3rem 1rem; border-left: 4px solid var(--rubric); color: var(--quote-ink); font-style: italic; }
     .content img { max-width: 100%; height: auto; border: 1px solid var(--rule); }
+    .dropcap::first-letter, .content > p:first-child::first-letter {
+      float: left;
+      margin: 4px 10px 0 0;
+      padding: 4px 8px 2px;
+      font: 700 3.1em/0.9 var(--f-display);
+      color: var(--rubric);
+      border: 1px solid var(--gold);
+      box-shadow: 2px 2px 0 var(--shadow);
+      background: var(--bg) repeating-conic-gradient(color-mix(in srgb, var(--gold) 30%, transparent) 0 25%, transparent 0 50%) 0 0 / 4px 4px;
+    }
     footer { margin-top: 4rem; color: var(--muted); font-size: 0.76rem; }
-    .footer-rule { height: 3px; margin-bottom: 1rem; background: linear-gradient(90deg, var(--accent), var(--accent-2) 55%, transparent 55%); }
-    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 2rem; padding: 1rem; border: 1px solid var(--rule); background: var(--panel); }
+    footer > .divider { margin: 0 0 1rem; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem 2rem; padding: 1rem; }
     .footer-heading { margin: 0 0 0.55rem; color: var(--accent); font-weight: bold; letter-spacing: 0.06em; }
     .footer-grid p { margin: 0.35rem 0; }
     .badge { display: inline-block; margin: 0 0.35rem 0.35rem 0; padding: 0.08rem 0.4rem; border: 1px solid var(--rule); background: var(--badge-bg); color: var(--ink); font-size: 0.67rem; }
@@ -538,7 +586,7 @@ const themeStyle = `<style>${themeCss({ ...ART, torches: TORCHES })}</style>`;
 
   <footer>
     {path !== '/' && <p class="return"><a href="/">&laquo; return to posts</a></p>}
-    <div class="footer-rule" aria-hidden="true"></div>
+    <div class="divider" aria-hidden="true"><i class="gem sm"></i><i class="gem"></i><i class="gem sm"></i></div>
     <div class="footer-grid">
       <section aria-labelledby="footer-system">
         <p class="footer-heading" id="footer-system">[SYSTEM]</p>

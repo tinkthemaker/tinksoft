@@ -16,14 +16,14 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
 ---
 <Base title="colophon — TinkSoft" description="Build details and current output size.">
   <header class="colo-head scene-panel">
-    <p class="scene-label">[BUILD REPORT]</p>
+    <p class="scene-label">BUILD REPORT</p>
     <p class="eyebrow">TARGET // GITHUB PAGES</p>
     <h1>colophon</h1>
     <p>The numbers below are generated during each production build.</p>
   </header>
 
   <section class="metrics scene-panel">
-    <p class="scene-label">[OUTPUT METRICS]</p>
+    <p class="scene-label">OUTPUT METRICS</p>
     <table class="log">
       <tr><td class="date">pages</td><td>@PAGES@ HTML pages</td></tr>
       <tr><td class="date">total weight</td><td>@RAW_KB@ KB raw &middot; @GZ_KB@ KB gzipped (entire site)</td></tr>
@@ -40,18 +40,18 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
 
   <div class="colo-grid">
     <section class="scene-panel">
-      <p class="scene-label">[COUNTER]</p>
+      <p class="scene-label">COUNTER</p>
       <p>The counter is a static SVG. It always reads 0001337 and records nothing.</p>
     </section>
 
     <section class="scene-panel">
-      <p class="scene-label">[MANIFEST]</p>
+      <p class="scene-label">MANIFEST</p>
       <p>Every deploy includes SHA-256 checksums at <a href="/checksums.txt">/checksums.txt</a> and a page size report at <a href="/size-report.txt">/size-report.txt</a>.</p>
     </section>
   </div>
 
   <section class="stack scene-panel">
-    <p class="scene-label">[STACK]</p>
+    <p class="scene-label">STACK</p>
     <p>
       Posts are markdown files. <a href="https://astro.build">Astro</a> builds
       them into static HTML. CSS is inlined. The site uses the system monospace

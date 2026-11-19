@@ -42,7 +42,7 @@ const sections = headings.filter((heading) => heading.depth === 2);
   tags={post.data.tags}
 >
   <header class="post-head scene-panel">
-    <p class="scene-label">[TRANSMISSION]</p>
+    <p class="scene-label">TRANSMISSION</p>
     <p class="eyebrow">FILE // {post.id}.txt</p>
     <h1>{post.data.title}</h1>
     {post.data.description && <p class="dek">{post.data.description}</p>}
@@ -61,7 +61,7 @@ const sections = headings.filter((heading) => heading.depth === 2);
   <div class:list={['post-layout', { 'has-sections': sections.length > 1 }]}>
     {sections.length > 1 && (
       <aside class="contents scene-panel" aria-labelledby="contents-title">
-        <p class="scene-label" id="contents-title">[IN THIS FILE]</p>
+        <p class="scene-label" id="contents-title">IN THIS FILE</p>
         <ol>
           {sections.map((heading) => (
             <li><a href={`#${heading.slug}`}>{heading.text}</a></li>
@@ -76,7 +76,7 @@ const sections = headings.filter((heading) => heading.depth === 2);
 
   {(relatedPosts.length > 0 || relatedProjects.length > 0) && (
     <section class="connections scene-panel" aria-labelledby="connected-files">
-      <h2 class="scene-label" id="connected-files">[CONNECTED FILES]</h2>
+      <h2 class="scene-label" id="connected-files">CONNECTED FILES</h2>
       <div class="connections-grid">
         {relatedProjects.length > 0 && (
           <section aria-labelledby="connected-projects">

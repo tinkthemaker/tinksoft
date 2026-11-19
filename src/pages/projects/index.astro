@@ -36,7 +36,7 @@ const counts = {
 
   <section class="status-board" aria-labelledby="status-heading">
     <div class="panel-title">
-      <h2 id="status-heading">[STATUS BOARD]</h2>
+      <h2 class="plate" id="status-heading">STATUS BOARD</h2>
       <span>SYNC: STATIC</span>
     </div>
     <div class="status-totals">
@@ -49,7 +49,7 @@ const counts = {
 
   <section class="project-directory" aria-labelledby="directory-heading">
     <div class="panel-title">
-      <h2 id="directory-heading">[RELEASE FILES]</h2>
+      <h2 class="plate" id="directory-heading">RELEASE FILES</h2>
       <span>SORT: STATE / DATE</span>
     </div>
     <div class="project-grid">
@@ -102,7 +102,6 @@ const counts = {
   .directory-link { font-size: 0.78rem; font-weight: bold; }
   .status-board, .project-directory { border: 1px solid var(--rule); box-shadow: 3px 3px 0 var(--badge-bg); margin-top: 1.75rem; }
   .panel-title { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--rule); background: var(--badge-bg); padding: 0.45rem 0.65rem; font-size: 0.72rem; }
-  .panel-title h2 { font-size: inherit; margin: 0; }
   .panel-title > span { color: var(--muted); white-space: nowrap; }
   .status-totals { display: grid; grid-template-columns: repeat(4, 1fr); }
   .status-totals > div { display: grid; gap: 0.1rem; padding: 0.8rem; border-right: 1px dotted var(--rule); }
