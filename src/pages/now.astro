@@ -73,19 +73,20 @@ const fmt = (date: Date) => date.toISOString().slice(0, 10);
   <style>
     .now-head { margin-bottom: 2rem; border-left: 4px solid var(--accent); }
     .now-head h1 { margin: 0.25rem 0; }
-    .now-head > p:not(.scene-label, .eyebrow, .stamp) { margin: 0; color: var(--muted); }
+    .now-head > p:not(.scene-label, .eyebrow, .stamp) { margin: 0; color: var(--muted); font: 17.5px/1.5 var(--serif); }
     .stamp { margin: 1rem 0 0; color: var(--ship); font-size: 0.72rem; font-weight: bold; letter-spacing: 0.06em; }
     .now-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(14rem, 0.8fr); gap: 1.25rem; align-items: start; }
     .queue { margin: 0; padding: 0; list-style: none; counter-reset: queue; }
     .queue li { display: grid; grid-template-columns: 2rem 10rem minmax(0, 1fr); gap: 0.75rem; padding: 0.8rem 0; border-bottom: 1px dotted var(--rule); counter-increment: queue; }
-    .queue li::before { content: counter(queue, decimal-leading-zero); color: var(--accent); font-size: 0.72rem; }
+    .queue li::before { content: counter(queue, decimal-leading-zero); color: var(--torch); font-size: 0.72rem; }
+    .queue strong { font: bold 1rem/1.35 var(--serif); }
     .queue span { color: var(--muted); }
     .activity { grid-column: 1 / -1; }
     .activity-list { margin: 0; padding: 0; list-style: none; }
     .activity-list li { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1rem; padding: 0.8rem 0; border-bottom: 1px dotted var(--rule); }
     .activity-list time { color: var(--muted); font-size: 0.76rem; font-variant-numeric: tabular-nums; }
     .activity-list h3 { margin: 0; font-size: 1rem; }
-    .activity-list p { margin: 0.2rem 0 0; color: var(--muted); font-size: 0.82rem; }
+    .activity-list p { margin: 0.2rem 0 0; color: var(--muted); font: 15.5px/1.5 var(--serif); }
     .activity-projects { margin-top: 0.25rem; color: var(--accent); font-size: 0.72rem; text-transform: uppercase; }
     .all-activity { margin: 0.9rem 0 0; color: var(--muted); font-size: 0.78rem; }
     .now-grid section > p:last-child { margin-bottom: 0; }

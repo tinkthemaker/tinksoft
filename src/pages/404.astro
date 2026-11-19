@@ -21,8 +21,9 @@ import Base from '../layouts/Base.astro';
   </section>
   <style>
     .lost { max-width: 44rem; margin: 4rem auto; border-left: 4px solid var(--accent-2); }
-    .code { color: var(--accent-2); font-size: 0.8rem; font-weight: bold; letter-spacing: 0.08em; }
-    .lost h1 { margin: 0.35rem 0; font-size: clamp(2rem, 8vw, 4rem); }
+    .code { color: var(--torch); font-size: 0.8rem; font-weight: bold; letter-spacing: 0.08em; }
+    .lost h1 { margin: 0.35rem 0; }
+    .lost h1 + p { color: var(--muted); font: 17.5px/1.5 var(--serif); }
     .lost nav { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1.5rem; }
   </style>
 </Base>

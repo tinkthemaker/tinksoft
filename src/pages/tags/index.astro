@@ -39,6 +39,7 @@ const maxCount = Math.max(...tags.map((tag) => tag.count), 1);
   <style>
     .page-head { margin-bottom: 1.5rem; }
     .page-head h1 { margin: 0.15rem 0 0.5rem; }
+    .page-head h1 + p { color: var(--muted); font: 17.5px/1.5 var(--serif); }
     .eyebrow {
       margin: 0;
       color: var(--accent);
@@ -73,7 +74,6 @@ const maxCount = Math.max(...tags.map((tag) => tag.count), 1);
       background: var(--badge-bg);
     }
     .meter span { display: block; width: var(--size); height: 100%; background: var(--accent); }
-    .tag-grid a:hover .count { color: inherit; }
     @media (max-width: 32rem) {
       .tag-grid { grid-template-columns: 1fr; }
     }

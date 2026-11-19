@@ -32,14 +32,14 @@ const sites = [
   <style>
     .links-head { margin-bottom: 2rem; border-left: 4px solid var(--hot); }
     .links-head h1 { margin: 0.25rem 0; }
-    .links-head > p:last-child { margin: 0; color: var(--muted); }
+    .links-head > p:last-child { margin: 0; color: var(--muted); font: 17.5px/1.5 var(--serif); }
     .link-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
-    .link-card { padding: 1rem; border: 1px solid var(--rule); background: var(--panel); }
-    .link-card:hover { border-color: var(--accent); box-shadow: 3px 3px 0 var(--shadow); transform: translate(-1px, -1px); }
+    .link-card { padding: 1rem; border: 3px double var(--rule); background: var(--panel); box-shadow: 4px 4px 0 var(--shadow); }
+    .link-card:hover { border-color: var(--gold); box-shadow: 5px 5px 0 var(--shadow); transform: translate(-1px, -1px); }
     .node-id { margin: 0; color: var(--muted); font-size: 0.68rem; letter-spacing: 0.06em; }
-    .link-card h2 { margin: 0.35rem 0; font-size: 1rem; }
+    .link-card h2 { margin: 0.35rem 0; font: bold 18px/1.3 var(--serif); }
     .link-card h2::before { content: ''; }
-    .link-card p:last-child { margin: 0; color: var(--muted); font-size: 0.84rem; }
+    .link-card p:last-child { margin: 0; color: var(--muted); font: 15.5px/1.5 var(--serif); }
     .now-link { margin-top: 1.5rem; padding: 0.6rem; border-block: 1px solid var(--rule); color: var(--muted); font-size: 0.78rem; }
     @media (max-width: 38rem) { .link-grid { grid-template-columns: 1fr; } }
     @media (prefers-reduced-motion: reduce) { .link-card:hover { transform: none; } }
