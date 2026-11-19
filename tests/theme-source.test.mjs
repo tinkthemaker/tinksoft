@@ -120,3 +120,18 @@ test('code blocks keep syntax colours but draw them from the amber CRT palette',
   assert.ok(css.includes('--astro-code-foreground:var(--code-ink)'));
   assert.ok(css.includes('--astro-code-background:var(--code-bg)'));
 });
+
+test('keyboard focus on links survives forced colours', () => {
+  const css = squash(base());
+  const block = css.slice(css.indexOf('@media(forced-colors:active)'));
+  assert.match(block, /a:focus-visible\{outline:2pxsolid;outline-offset:2px;?\}/);
+});
+
+test('the drop-cap paragraph contains its float', () => {
+  assert.ok(squash(base()).includes('.dropcap,.content>p:first-child{display:flow-root;'));
+});
+
+test('page-only table styles stay out of the global stylesheet', () => {
+  assert.doesNotMatch(base(), /table\.log|td\.date/);
+  for (const page of ['src/pages/colophon.astro', 'src/pages/releases.astro']) assert.match(read(page), /table\.log td/, page);
+});

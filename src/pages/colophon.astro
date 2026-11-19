@@ -67,6 +67,18 @@ const fmt = (d: Date) => d.toISOString().slice(0, 10);
   </section>
 
   <style>
+    /* Key/value table: only this page and releases use it, so it stays out of the global CSS. */
+    table.log { width: 100%; border-collapse: collapse; }
+    table.log tr { border-bottom: 1px dotted var(--rule); }
+    table.log td { padding: 0.65rem 0.75rem 0.65rem 0; vertical-align: top; }
+    table.log tr:hover { background: color-mix(in srgb, var(--panel) 70%, transparent); box-shadow: inset 3px 0 0 var(--torch); }
+    td.date { white-space: nowrap; color: var(--muted); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+    @media (max-width: 30rem) {
+      table.log, table.log :global(tbody), table.log tr, table.log td { display: block; }
+      table.log td { padding: 0; }
+      table.log tr { padding: 0.75rem 0; }
+      table.log tr + tr { margin-top: 0.35rem; }
+    }
     .colo-head { margin-bottom: 2rem; border-left: 4px solid var(--accent); }
     .colo-head h1 { margin: 0.25rem 0; }
     .colo-head > p:last-child { margin: 0; color: var(--muted); font: 17.5px/1.5 var(--serif); }

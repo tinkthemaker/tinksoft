@@ -451,12 +451,8 @@ const themeStyle = `<style>${themeCss({ ...ART, torches: TORCHES })}</style>`;
       font-size: 0.78rem;
       font-weight: bold;
     }
-    table.log { width: 100%; border-collapse: collapse; }
-    table.log tr { border-bottom: 1px dotted var(--rule); }
-    table.log td { padding: 0.65rem 0.75rem 0.65rem 0; vertical-align: top; }
     /* List rows: tint and an ember bar on hover. Never --panel-2, which can't carry text by day. */
-    table.log tr:hover, .row-hover:hover { background: color-mix(in srgb, var(--panel) 70%, transparent); box-shadow: inset 3px 0 0 var(--torch); }
-    td.date { white-space: nowrap; color: var(--muted); font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+    .row-hover:hover { background: color-mix(in srgb, var(--panel) 70%, transparent); box-shadow: inset 3px 0 0 var(--torch); }
     .post-meta { color: var(--muted); font-size: 0.82rem; }
     nav.post-nav { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
     nav.post-nav p { margin: 0; padding: 0.75rem; }
@@ -487,6 +483,8 @@ const themeStyle = `<style>${themeCss({ ...ART, torches: TORCHES })}</style>`;
     .content :is(code):not(pre code) { padding: 0.08rem 0.3rem; background: var(--code-bg); color: var(--code-ink); font-size: 0.86em; }
     .content blockquote { margin-left: 0; padding: 0.3rem 0 0.3rem 1rem; border-left: 4px solid var(--rubric); color: var(--quote-ink); font-style: italic; }
     .content img { max-width: 100%; height: auto; border: 1px solid var(--rule); }
+    /* flow-root keeps the floated initial inside a one-line first paragraph. */
+    .dropcap, .content > p:first-child { display: flow-root; }
     .dropcap::first-letter, .content > p:first-child::first-letter {
       float: left;
       margin: 4px 10px 0 0;
@@ -523,10 +521,6 @@ const themeStyle = `<style>${themeCss({ ...ART, torches: TORCHES })}</style>`;
     }
     @media (max-width: 30rem) {
       .system-bar { gap: 0.5rem; font-size: 0.58rem; }
-      table.log, table.log tbody, table.log tr, table.log td { display: block; }
-      table.log td { padding: 0; }
-      table.log tr { padding: 0.75rem 0; }
-      table.log tr + tr { margin-top: 0.35rem; }
       nav.post-nav { grid-template-columns: 1fr; }
       .scene-panel { padding: 1rem; }
     }
@@ -539,6 +533,9 @@ const themeStyle = `<style>${themeCss({ ...ART, torches: TORCHES })}</style>`;
       .wordmark { -webkit-text-fill-color: currentColor; background: none; filter: none; }
       .wordmark:is(:hover, :focus-visible), .wordmark .ini { -webkit-text-fill-color: currentColor; background: none; filter: none; }
       .wordmark-glow::before, .wordmark-glow::after { display: none; }
+      /* Fills and shadows are forced off here, so focus and the current page need a real line. */
+      a:focus-visible { outline: 2px solid; outline-offset: 2px; }
+      nav.site a[aria-current='page'] { text-decoration: underline; }
     }
   </style>
 </head>
