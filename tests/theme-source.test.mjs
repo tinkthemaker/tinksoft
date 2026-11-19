@@ -63,3 +63,22 @@ test('every link highlight wins over page styles, and its children inherit', () 
   assert.ok(css.includes('a:hover,a:focus-visible{color:var(--hi-ink)!important;background-color:var(--hi-bg)!important;'));
   assert.ok(css.includes('a:is(:hover,:focus-visible)*{color:inherit!important;}'));
 });
+
+test('the ASCII logo is gone and the wordmark is a real-text link home', () => {
+  assert.doesNotMatch(base(), /class="ascii"|a\.logo/);
+  assert.match(base(), /<a class="wordmark" href="\/"><span class="ini">T<\/span>inkSoft<\/a>/);
+});
+
+test('the wordmark survives forced colours', () => {
+  const css = squash(base());
+  const block = css.slice(css.indexOf('@media(forced-colors:active)'));
+  assert.ok(block.startsWith('@media(forced-colors:active)'), 'forced-colors block present');
+  assert.match(block, /\.wordmark\{-webkit-text-fill-color:currentColor;background:none;filter:none;?\}/);
+});
+
+test('the torch flicker stops for reduced motion and uses the generated positions', () => {
+  const css = squash(base());
+  assert.match(css, /@media\(prefers-reduced-motion:reduce\)\{[^@]*\.viewport::before,\.viewport::after\{animation:none;?\}/);
+  assert.ok(css.includes('var(--torch-l)') && css.includes('var(--torch-r)'));
+  assert.ok(css.includes('steps(1)'));
+});
