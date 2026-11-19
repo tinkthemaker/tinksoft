@@ -7,7 +7,8 @@ plain HTML out.
 ## The numbers
 
 - **0 KB JavaScript** shipped to the browser
-- **2 HTTP requests** for a typical page — the document and decorative counter; CSS and favicon are inlined (the About page also loads the link badge)
+- **2 HTTP requests** for a typical page — the document and decorative counter; CSS, favicon and the dithered art are inlined (the About page also loads the link badge). A first visit also fetches two self-hosted font files, cached after that
+- **Two self-hosted fonts** — Grenze Gotisch for headings and Silkscreen for section plates, both OFL; titles and reading text use a system old-style serif, the chrome stays monospace
 - Build-time page-count and size measurements on the [colophon](https://tinksoft.com/colophon/)
 - `Content-Security-Policy: default-src 'none'` (via meta tag — GitHub Pages doesn't support custom HTTP headers)
 - Full dark mode via `prefers-color-scheme` — no toggle, no JS, no flash
@@ -112,8 +113,12 @@ and set the DNS records GitHub shows at your registrar. Astro copies
 - `src/content.config.ts` — validated frontmatter schemas for both collections
 - `src/layouts/Base.astro` — shared HTML structure, metadata, navigation, and global CSS
 - `src/pages/` — page templates and their scoped CSS, RSS, and plain-text routes
-- `src/lib/content.mjs` — shared tag routing and project status metadata
+- `src/lib/content.mjs` — shared tag routing, project status metadata, and the projects roster rows
+- `src/lib/theme.mjs` — the Grimoire palette: every colour token for both schemes, contrast-tested
+- `src/generated/dither-art.mjs` — the inlined corridor and strip art (generated; don't edit by hand)
 - `scripts/` — build artifacts, measurements, checksums, and output validation
+- `scripts/dither-art.mjs` — renders the dithered art; run `node scripts/dither-art.mjs` by hand when it changes
+- `public/fonts/` — self-hosted woff2 fonts, their OFL licenses, and a source note
 - `tests/` — Node test runner tests, including isolated build-validator fixtures
 - `tsconfig.json` — strict Astro/TypeScript configuration
 - `public/` — tinksoft.nfo, humans.txt, robots.txt, badge.svg (88×31 button)

@@ -132,7 +132,7 @@ const sections = headings.filter((heading) => heading.depth === 2);
     @media (prefers-color-scheme: dark) { .tag-row a { background: var(--panel-2); } }
     .post-layout { display: grid; gap: 2rem; }
     .post-layout.has-sections { grid-template-columns: minmax(0, 1fr) 13rem; align-items: start; }
-    .prose { grid-column: 1; grid-row: 1; }
+    .prose { grid-column: 1; grid-row: 1; min-width: 0; }
     .contents { grid-column: 2; grid-row: 1; position: sticky; top: 1rem; padding: 1rem; font-size: 0.74rem; }
     .contents ol { margin: 0; padding-left: 1.3rem; }
     .contents li + li { margin-top: 0.45rem; }
